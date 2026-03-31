@@ -1,6 +1,24 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import './globals.css';
+
+function getMetadataBase() {
+  const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (!value) {
+    return new URL('http://localhost:3000');
+  }
+
+  try {
+    return new URL(value);
+  } catch {
+    try {
+      return new URL(`https://${value}`);
+    } catch {
+      return new URL('http://localhost:3000');
+    }
+  }
+}
 
 const heading = Cormorant_Garamond({
   subsets: ['latin', 'cyrillic'],
@@ -17,7 +35,7 @@ const body = DM_Sans({
 export const metadata: Metadata = {
   title: "SPIL'NE",
   description: "SPIL'NE essentials for a calm everyday wardrobe.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: getMetadataBase(),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
