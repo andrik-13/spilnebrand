@@ -1,0 +1,59 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fafaf7;
+  color: #1a1816;
+}
+
+@layer base {
+  * {
+    @apply border-accent;
+  }
+
+  body {
+    @apply bg-background font-sans text-base leading-relaxed text-primary;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif font-normal tracking-[-0.03em] text-primary;
+  }
+
+  h1 {
+    @apply text-5xl md:text-7xl leading-[0.95];
+  }
+
+  h2 {
+    @apply text-4xl md:text-5xl leading-tight;
+  }
+
+  h3 {
+    @apply text-3xl md:text-[32px] leading-tight;
+  }
+
+  a,
+  button {
+    @apply transition-colors;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

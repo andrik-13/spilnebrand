@@ -1,0 +1,32 @@
+﻿[
+  {
+    "id": "product-id",
+    "slug": "product-slug",
+    "category": "tops",
+    "price": 1000,
+    "sizes": ["S", "M"],
+    "colors": ["black", "white"],
+    "isNew": true,
+    "images": [
+      "https://example.com/main.jpg",
+      "https://example.com/secondary.jpg"
+    ],
+    "translations": {
+      "ua": {
+        "name": "Назва товару",
+        "description": "Опис українською мовою.",
+        "composition": "Склад українською мовою.",
+        "care": "Догляд українською мовою.",
+        "delivery": "Доставка українською мовою."
+      },
+      "en": {
+        "name": "Product name",
+        "description": "Description in English.",
+        "composition": "Composition in English.",
+        "care": "Care instructions in English.",
+        "delivery": "Delivery information in English."
+      }
+    }
+  }
+]
+
