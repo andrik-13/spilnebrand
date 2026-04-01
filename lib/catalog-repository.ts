@@ -2,6 +2,7 @@ import type { Category } from '@/lib/i18n';
 import { products, type Product } from '@/lib/products';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { unstable_noStore as noStore } from 'next/cache';
+import { cache } from 'react';
 
 interface ProductImageRow {
   url: string;
@@ -100,12 +101,12 @@ function applyFilters(items: Product[], options: ListProductsOptions) {
 }
 
 export async function listProducts(options: ListProductsOptions = {}) {
+  noStore();
+
   const supabase = createSupabaseServerClient();
   if (!supabase) {
     return applyFilters(products, options);
   }
-
-  noStore();
 
   try {
     let query = supabase
@@ -129,13 +130,11 @@ export async function listProducts(options: ListProductsOptions = {}) {
   }
 }
 
-export async function getProductBySlug(slug: string) {
+const getProductBySlugCached = cache(async (slug: string) => {
   const supabase = createSupabaseServerClient();
   if (!supabase) {
     return products.find((product) => product.slug === slug) ?? null;
   }
-
-  noStore();
 
   try {
     const { data, error } = await supabase
@@ -153,4 +152,9 @@ export async function getProductBySlug(slug: string) {
   } catch {
     return null;
   }
+});
+
+export async function getProductBySlug(slug: string) {
+  noStore();
+  return getProductBySlugCached(slug);
 }

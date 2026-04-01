@@ -15,10 +15,11 @@ export async function generateMetadata({ params }: { params: { locale: string; s
 
   const locale = isLocale(params.locale) ? params.locale : 'ua';
   const localized = getLocalizedProduct(product, locale);
+
   return {
     title: `${localized.name} | SPIL'NE`,
     description: localized.description,
-    openGraph: { images: [localized.images[0]] },
+    openGraph: localized.images[0] ? { images: [localized.images[0]] } : undefined,
   };
 }
 
