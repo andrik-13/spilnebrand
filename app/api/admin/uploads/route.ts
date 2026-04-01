@@ -24,12 +24,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'File is too large (max 10MB).' }, { status: 400 });
   }
 
-  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+  const mimeType = file.type.trim().toLowerCase();
+
+  if (!ALLOWED_IMAGE_TYPES.has(mimeType)) {
     return NextResponse.json({ error: 'Only JPG, PNG, WEBP, GIF, and AVIF images are allowed.' }, { status: 400 });
   }
 
   try {
-    const url = await uploadAdminProductImage(file, slug);
+    const url = await uploadAdminProductImage(file, slug, mimeType);
     return NextResponse.json({ url });
   } catch (error) {
     const message = isTaggedError(error, ADMIN_ERROR_CODES.storageConfiguration)
