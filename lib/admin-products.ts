@@ -1,6 +1,7 @@
 import type { Category, ColorKey, Locale } from '@/lib/i18n';
 import { products, type Product } from '@/lib/products';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
+import { ADMIN_ERROR_CODES, createTaggedError } from '@/lib/admin-errors';
 
 export interface AdminProductInput {
   slug: string;
@@ -52,18 +53,16 @@ function toOptionalText(value?: string | null) {
   return value ?? undefined;
 }
 
-export class AdminConfigurationError extends Error {
-  constructor(message = 'Supabase admin client is not configured.') {
-    super(message);
-    this.name = 'AdminConfigurationError';
-  }
+function fallbackCare(locale: Locale) {
+  return locale === 'ua'
+    ? 'Делікатне прання при 30°C. Сушити природним способом.'
+    : 'Delicate wash at 30°C. Air dry naturally.';
 }
 
-export class AdminDataAccessError extends Error {
-  constructor(message = 'Admin data could not be loaded from Supabase.') {
-    super(message);
-    this.name = 'AdminDataAccessError';
-  }
+function fallbackDelivery(locale: Locale) {
+  return locale === 'ua'
+    ? 'Доставка по Україні Новою Поштою або Укрпоштою після підтвердження замовлення.'
+    : 'Delivery across Ukraine via Nova Poshta or Ukrposhta after order confirmation.';
 }
 
 function mapSupabaseRowToAdminProduct(row: ProductRow): AdminProductRecord {
@@ -109,7 +108,10 @@ function requireAdminClient() {
   const client = createSupabaseAdminClient();
 
   if (!client) {
-    throw new AdminConfigurationError();
+    throw createTaggedError(
+      ADMIN_ERROR_CODES.configuration,
+      'Supabase admin credentials are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to continue.'
+    );
   }
 
   return client;
@@ -230,7 +232,7 @@ export async function listAdminProducts() {
     .order('created_at', { ascending: false });
 
   if (error || !data) {
-    throw new AdminDataAccessError(error?.message || 'Failed to load admin products from Supabase.');
+    throw createTaggedError(ADMIN_ERROR_CODES.dataAccess, error?.message || 'Failed to load admin products from Supabase.');
   }
 
   return (data as ProductRow[]).map(mapSupabaseRowToAdminProduct);
@@ -250,7 +252,7 @@ export async function getAdminProductById(id: string) {
     .single();
 
   if (error || !data) {
-    throw new AdminDataAccessError(error?.message || 'Failed to load product from Supabase.');
+    throw createTaggedError(ADMIN_ERROR_CODES.dataAccess, error?.message || 'Failed to load product from Supabase.');
   }
 
   return mapSupabaseRowToAdminProduct(data as ProductRow);
@@ -327,3 +329,4 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
 
   await syncProductImages(client, id, images);
 }
+

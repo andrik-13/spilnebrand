@@ -1,18 +1,15 @@
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
-
-export class AdminStorageConfigurationError extends Error {
-  constructor(message = 'Supabase storage is not configured.') {
-    super(message);
-    this.name = 'AdminStorageConfigurationError';
-  }
-}
+import { ADMIN_ERROR_CODES, createTaggedError } from '@/lib/admin-errors';
 
 function requireStorageClient() {
   const client = createSupabaseAdminClient();
   const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET;
 
   if (!client || !bucket) {
-    throw new AdminStorageConfigurationError('Supabase storage is not configured. Add NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET and admin credentials.');
+    throw createTaggedError(
+      ADMIN_ERROR_CODES.storageConfiguration,
+      'Supabase storage is not configured. Add NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET and admin credentials.'
+    );
   }
 
   return { client, bucket };
