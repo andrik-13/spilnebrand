@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Button } from '@/components/ui/Button';
+import { listProducts } from '@/lib/catalog-repository';
 import { getLocalizedPath, type Locale, ui } from '@/lib/i18n';
-import { getLocalizedProduct, products } from '@/lib/products';
+import { getLocalizedProduct } from '@/lib/products';
 
 const lookbookImages = [
   '/brand/hanger-red.jpg',
@@ -14,10 +15,12 @@ const lookbookImages = [
   '/brand/package.jpg',
 ];
 
-export default function HomePage({ params }: { params: { locale: Locale } }) {
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage({ params }: { params: { locale: Locale } }) {
   const locale = params.locale;
   const copy = ui[locale];
-  const newCollection = products.filter((product) => product.isNew).slice(0, 4).map((product) => getLocalizedProduct(product, locale));
+  const newCollection = (await listProducts({ isNew: true, limit: 4 })).map((product) => getLocalizedProduct(product, locale));
 
   return (
     <div>

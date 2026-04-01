@@ -1,20 +1,16 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { ProductDetails } from '@/components/product/ProductDetails';
-import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
-import { getLocalizedProduct, getProductBySlug, products } from '@/lib/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { getProductBySlug } from '@/lib/catalog-repository';
+import { ProductDetails } from '@/components/product/ProductDetails';
+import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
+import { getLocalizedProduct } from '@/lib/products';
 
-export function generateStaticParams() {
-  return products.flatMap((product) => [
-    { locale: 'ua', slug: product.slug },
-    { locale: 'en', slug: product.slug },
-  ]);
-}
+export const dynamic = 'force-dynamic';
 
-export function generateMetadata({ params }: { params: { locale: string; slug: string } }): Metadata {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: { params: { locale: string; slug: string } }): Promise<Metadata> {
+  const product = await getProductBySlug(params.slug);
   if (!product) return {};
 
   const locale = isLocale(params.locale) ? params.locale : 'ua';
@@ -22,14 +18,14 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
   return {
     title: `${localized.name} | SPIL'NE`,
     description: localized.description,
-    openGraph: { images: [localized.images[0]] }
+    openGraph: { images: [localized.images[0]] },
   };
 }
 
-export default function ProductPage({ params }: { params: { locale: Locale; slug: string } }) {
+export default async function ProductPage({ params }: { params: { locale: Locale; slug: string } }) {
   const locale = params.locale;
   const copy = ui[locale];
-  const product = getProductBySlug(params.slug);
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
     notFound();
