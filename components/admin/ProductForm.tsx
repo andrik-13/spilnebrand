@@ -17,7 +17,7 @@ interface ProductFormProps {
 }
 
 const sizeOptions = ['S', 'M'] as const;
-const colorOptions: ColorKey[] = ['black', 'beige', 'gray', 'white'];
+const colorOptions: ColorKey[] = ['black', 'beige', 'gray', 'white', 'red'];
 
 export function ProductForm({
   locale,

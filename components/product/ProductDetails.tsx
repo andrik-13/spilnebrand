@@ -19,7 +19,8 @@ function findColorImageIndex(images: string[], color: string) {
     black: ['black'],
     beige: ['beige'],
     gray: ['gray', 'graphite'],
-    white: ['white']
+    white: ['white'],
+    red: ['red']
   };
 
   const terms = aliases[color] ?? [color];
