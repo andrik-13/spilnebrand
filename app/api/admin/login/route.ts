@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import { ADMIN_COOKIE } from '@/lib/admin-auth';
+import { ADMIN_COOKIE, getRequestOrigin, normalizeAdminNextPath } from '@/lib/admin-auth';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
   const password = String(formData.get('password') || '');
   const locale = String(formData.get('locale') || 'ua');
-  const nextPath = String(formData.get('next') || `/${locale}/admin`);
+  const nextPath = normalizeAdminNextPath(String(formData.get('next') || `/${locale}/admin`), locale);
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   const redirectUrl = new URL(
     password && adminPassword && password === adminPassword ? nextPath : `/${locale}/admin/login?error=1`,
-    request.url
+    getRequestOrigin(request)
   );
 
   const response = NextResponse.redirect(redirectUrl);
