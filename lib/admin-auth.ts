@@ -28,3 +28,11 @@ export function buildAdminLoginRedirect(request: NextRequest, locale: string, ne
   loginUrl.searchParams.set('next', nextPath);
   return NextResponse.redirect(loginUrl);
 }
+
+export function normalizeAdminNextPath(value: string, locale: string) {
+  if (value.startsWith('/') && !value.startsWith('//')) {
+    return value;
+  }
+
+  return `/${locale}/admin`;
+}
