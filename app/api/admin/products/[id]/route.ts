@@ -1,16 +1,22 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { buildAdminLoginRedirect, hasAdminAccess } from '@/lib/admin-auth';
 import { AdminConfigurationError, updateAdminProduct } from '@/lib/admin-products';
 import { parseAdminProductForm } from '@/lib/admin-form';
 
-function buildRedirectUrl(request: Request, pathname: string, search: Record<string, string>) {
+function buildRedirectUrl(request: NextRequest, pathname: string, search: Record<string, string>) {
   const url = new URL(pathname, request.url);
   Object.entries(search).forEach(([key, value]) => url.searchParams.set(key, value));
   return url;
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   const formData = await request.formData();
   const locale = String(formData.get('locale') || 'ua');
+
+  if (!hasAdminAccess(request)) {
+    return buildAdminLoginRedirect(request, locale, `/${locale}/admin/products/${params.id}`);
+  }
 
   try {
     const input = parseAdminProductForm(formData);
