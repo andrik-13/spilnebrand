@@ -1,9 +1,14 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
-import { categoryOrder, getLocalizedPath, type Category, type Locale, ui } from '@/lib/i18n';
+import { categoryOrder, getLocalizedPath, isLocale, type Category, ui } from '@/lib/i18n';
 import { getLocalizedProduct, products } from '@/lib/products';
 
-export default function CatalogPage({ params, searchParams }: { params: { locale: Locale }; searchParams: { category?: string } }) {
+export default function CatalogPage({ params, searchParams }: { params: { locale: string }; searchParams: { category?: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
   const locale = params.locale;
   const copy = ui[locale];
   const activeFilter = (searchParams.category as Category | 'all' | undefined) || 'all';

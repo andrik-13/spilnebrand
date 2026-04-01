@@ -1,9 +1,10 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Button } from '@/components/ui/Button';
-import { getLocalizedPath, type Locale, ui } from '@/lib/i18n';
+import { getLocalizedPath, isLocale, ui } from '@/lib/i18n';
 import { getLocalizedProduct, products } from '@/lib/products';
 
 const lookbookImages = [
@@ -14,7 +15,11 @@ const lookbookImages = [
   '/brand/package.jpg',
 ];
 
-export default function HomePage({ params }: { params: { locale: Locale } }) {
+export default function HomePage({ params }: { params: { locale: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
   const locale = params.locale;
   const copy = ui[locale];
   const newCollection = products.filter((product) => product.isNew).slice(0, 4).map((product) => getLocalizedProduct(product, locale));

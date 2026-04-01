@@ -1,7 +1,12 @@
-﻿import { type Locale, ui } from '@/lib/i18n';
+import { notFound } from 'next/navigation';
+import { isLocale, ui } from '@/lib/i18n';
 import { listProducts } from '@/lib/catalog-repository';
 
-export default async function AdminPage({ params }: { params: { locale: Locale } }) {
+export default async function AdminPage({ params }: { params: { locale: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
   const locale = params.locale;
   const copy = ui[locale];
   const items = await listProducts();
