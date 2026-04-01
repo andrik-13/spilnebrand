@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(buildAdminRedirectUrl(request, `/${locale}/admin/products/${id}`, { saved: '1' }));
   } catch (error) {
     const message = isTaggedError(error, ADMIN_ERROR_CODES.configuration)
-      ? 'Supabase admin credentials are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to continue.'
+      ? error.message
       : error instanceof Error
         ? error.message
         : 'Failed to create product.';

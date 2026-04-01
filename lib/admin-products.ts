@@ -109,7 +109,10 @@ function requireAdminClient() {
   const client = createSupabaseAdminClient();
 
   if (!client) {
-    throw createTaggedError(ADMIN_ERROR_CODES.configuration, 'Supabase admin client is not configured.');
+    throw createTaggedError(
+      ADMIN_ERROR_CODES.configuration,
+      'Supabase admin credentials are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to continue.'
+    );
   }
 
   return client;
