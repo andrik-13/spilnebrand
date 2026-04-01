@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { buildAdminLoginRedirect, hasAdminAccess } from '@/lib/admin-auth';
+import { buildAdminLoginRedirect, buildAdminRedirectUrl, hasAdminAccess } from '@/lib/admin-auth';
 import { AdminConfigurationError, createAdminProduct } from '@/lib/admin-products';
 import { parseAdminProductForm } from '@/lib/admin-form';
-
-function buildRedirectUrl(request: NextRequest, pathname: string, search: Record<string, string>) {
-  const url = new URL(pathname, request.url);
-  Object.entries(search).forEach(([key, value]) => url.searchParams.set(key, value));
-  return url;
-}
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -21,7 +15,7 @@ export async function POST(request: NextRequest) {
   try {
     const input = parseAdminProductForm(formData);
     const id = await createAdminProduct(input);
-    return NextResponse.redirect(buildRedirectUrl(request, `/${locale}/admin/products/${id}`, { saved: '1' }));
+    return NextResponse.redirect(buildAdminRedirectUrl(request, `/${locale}/admin/products/${id}`, { saved: '1' }));
   } catch (error) {
     const message = error instanceof AdminConfigurationError
       ? 'Supabase admin credentials are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to continue.'
@@ -29,6 +23,6 @@ export async function POST(request: NextRequest) {
         ? error.message
         : 'Failed to create product.';
 
-    return NextResponse.redirect(buildRedirectUrl(request, `/${locale}/admin/products/new`, { error: message }));
+    return NextResponse.redirect(buildAdminRedirectUrl(request, `/${locale}/admin/products/new`, { error: message }));
   }
 }

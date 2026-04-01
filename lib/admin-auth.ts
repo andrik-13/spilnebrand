@@ -29,6 +29,16 @@ export function buildAdminLoginRedirect(request: NextRequest, locale: string, ne
   return NextResponse.redirect(loginUrl);
 }
 
+export function buildAdminRedirectUrl(
+  request: Request | NextRequest,
+  pathname: string,
+  search: Record<string, string> = {}
+) {
+  const url = new URL(pathname, getRequestOrigin(request));
+  Object.entries(search).forEach(([key, value]) => url.searchParams.set(key, value));
+  return url;
+}
+
 export function normalizeAdminNextPath(value: string, locale: string) {
   if (value.startsWith('/') && !value.startsWith('//')) {
     return value;
