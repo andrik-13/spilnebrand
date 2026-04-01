@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { type ChangeEvent, useMemo, useRef, useState } from 'react';
-import { categoryOrder, type ColorKey, type Locale, locales, ui } from '@/lib/i18n';
+import { categoryOrder, colorOptions, type Locale, locales, ui } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
 
 interface ProductFormProps {
@@ -17,7 +17,6 @@ interface ProductFormProps {
 }
 
 const sizeOptions = ['S', 'M'] as const;
-const colorOptions: ColorKey[] = ['black', 'beige', 'gray', 'white', 'red'];
 
 export function ProductForm({
   locale,
@@ -190,7 +189,7 @@ export function ProductForm({
             />
           </label>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
               <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Composition</span>
               <textarea
@@ -198,7 +197,6 @@ export function ProductForm({
                 defaultValue={product.translations[entryLocale].composition}
                 rows={3}
                 className="w-full border border-accent bg-white px-4 py-3 outline-none"
-                required
               />
             </label>
 
@@ -209,18 +207,6 @@ export function ProductForm({
                 defaultValue={product.translations[entryLocale].care}
                 rows={3}
                 className="w-full border border-accent bg-white px-4 py-3 outline-none"
-                required
-              />
-            </label>
-
-            <label className="block">
-              <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Delivery</span>
-              <textarea
-                name={`delivery_${entryLocale}`}
-                defaultValue={product.translations[entryLocale].delivery}
-                rows={3}
-                className="w-full border border-accent bg-white px-4 py-3 outline-none"
-                required
               />
             </label>
           </div>

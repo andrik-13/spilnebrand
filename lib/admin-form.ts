@@ -1,8 +1,7 @@
-import { locales, type Category, type ColorKey, type Locale } from '@/lib/i18n';
+import { colorOptions, locales, type Category, type ColorKey, type Locale } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
 
 const allowedCategories: Category[] = ['tops', 'bottoms', 'sets'];
-const allowedColors: ColorKey[] = ['black', 'beige', 'gray', 'white'];
 const allowedSizes = ['S', 'M'] as const;
 
 function getString(formData: FormData, key: string) {
@@ -22,7 +21,7 @@ export function parseAdminProductForm(formData: FormData): AdminProductInput {
     (allowedSizes as readonly string[]).includes(size)
   );
   const colors = getStringArray(formData, 'colors').filter((color): color is ColorKey =>
-    (allowedColors as readonly string[]).includes(color)
+    (colorOptions as readonly string[]).includes(color)
   );
   const price = Number(getString(formData, 'price'));
   const images = getString(formData, 'images')
@@ -51,7 +50,6 @@ export function parseAdminProductForm(formData: FormData): AdminProductInput {
     description: getString(formData, `description_${locale}`),
     composition: getString(formData, `composition_${locale}`),
     care: getString(formData, `care_${locale}`),
-    delivery: getString(formData, `delivery_${locale}`),
   });
 
   const translations = Object.fromEntries(

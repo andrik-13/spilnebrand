@@ -1,6 +1,7 @@
 export type Locale = 'ua' | 'en';
 export type Category = 'tops' | 'bottoms' | 'sets';
-export type ColorKey = 'black' | 'beige' | 'gray' | 'white' | 'red';
+export const colorOptions = ['black', 'beige', 'gray', 'white', 'red'] as const;
+export type ColorKey = (typeof colorOptions)[number];
 
 export const locales: Locale[] = ['ua', 'en'];
 
