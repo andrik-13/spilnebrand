@@ -24,7 +24,10 @@ function findColorImageIndex(images: string[], color: string) {
   };
 
   const terms = aliases[color] ?? [color];
-  const index = images.findIndex((image) => terms.some((term) => image.toLowerCase().includes(term)));
+  const index = images.findIndex((image) => {
+    const tokens = image.toLowerCase().split(/[\\/._\-\s]+/).filter(Boolean);
+    return terms.some((term) => tokens.includes(term));
+  });
   return index >= 0 ? index : 0;
 }
 
