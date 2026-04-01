@@ -22,12 +22,10 @@ interface ProductRow {
   name_en: string;
   description_ua: string;
   description_en: string;
-  composition_ua: string;
-  composition_en: string;
+  composition_ua?: string | null;
+  composition_en?: string | null;
   care_ua?: string | null;
   care_en?: string | null;
-  delivery_ua?: string | null;
-  delivery_en?: string | null;
   product_images?: ProductImageRow[] | null;
 }
 
@@ -35,18 +33,6 @@ interface ListProductsOptions {
   category?: string | null;
   isNew?: boolean;
   limit?: number;
-}
-
-function fallbackDelivery(locale: 'ua' | 'en') {
-  return locale === 'ua'
-    ? 'Доставка по Україні Новою Поштою або Укрпоштою після підтвердження замовлення.'
-    : 'Delivery across Ukraine via Nova Poshta or Ukrposhta after order confirmation.';
-}
-
-function fallbackCare(locale: 'ua' | 'en') {
-  return locale === 'ua'
-    ? 'Делікатне прання при 30°C. Сушити природним способом.'
-    : 'Delicate wash at 30°C. Air dry naturally.';
 }
 
 function mapSupabaseRowToProduct(row: ProductRow): Product {
@@ -67,16 +53,14 @@ function mapSupabaseRowToProduct(row: ProductRow): Product {
       ua: {
         name: row.name_ua,
         description: row.description_ua,
-        composition: row.composition_ua,
-        care: row.care_ua || fallbackCare('ua'),
-        delivery: row.delivery_ua || fallbackDelivery('ua'),
+        composition: row.composition_ua || undefined,
+        care: row.care_ua || undefined,
       },
       en: {
         name: row.name_en,
         description: row.description_en,
-        composition: row.composition_en,
-        care: row.care_en || fallbackCare('en'),
-        delivery: row.delivery_en || fallbackDelivery('en'),
+        composition: row.composition_en || undefined,
+        care: row.care_en || undefined,
       },
     },
   };
@@ -111,7 +95,7 @@ export async function listProducts(options: ListProductsOptions = {}) {
   try {
     let query = supabase
       .from('products')
-      .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,delivery_ua,delivery_en,product_images(url,position)')
+      .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,product_images(url,position)')
       .eq('is_active', true)
       .order('created_at', { ascending: false });
 
@@ -139,7 +123,7 @@ const getProductBySlugCached = cache(async (slug: string) => {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,delivery_ua,delivery_en,product_images(url,position)')
+      .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,product_images(url,position)')
       .eq('slug', slug)
       .eq('is_active', true)
       .single();

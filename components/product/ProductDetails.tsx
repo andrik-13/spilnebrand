@@ -43,13 +43,12 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
     setSelectedColor(product.colors[0] ?? null);
   }, [product]);
 
-  const accordionItems = useMemo(
-    () => [
-      { title: copy.compositionAndCare, content: `${product.composition}\n\n${product.care}` },
-      { title: copy.relatedDelivery, content: product.delivery }
-    ],
-    [copy.compositionAndCare, copy.relatedDelivery, product]
-  );
+  const accordionItems = useMemo(() => {
+    const compositionAndCare = [product.composition, product.care].filter(Boolean).join('\n\n');
+    return compositionAndCare
+      ? [{ title: copy.compositionAndCare, content: compositionAndCare }]
+      : [];
+  }, [copy.compositionAndCare, product.care, product.composition]);
 
   const handleOrder = () => {
     window.open(
@@ -130,8 +129,12 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
             </Button>
             <p className="mt-3 text-center text-[13px] uppercase tracking-[2px] text-muted">{copy.orderHint}</p>
 
-            <div className="my-10 h-px bg-accent" />
-            <ProductAccordion items={accordionItems} />
+            {accordionItems.length > 0 ? (
+              <>
+                <div className="my-10 h-px bg-accent" />
+                <ProductAccordion items={accordionItems} />
+              </>
+            ) : null}
           </div>
         </div>
 
@@ -174,7 +177,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
               <SizeSelector sizes={product.sizes} selectedSize={selectedSize} onSelectSize={setSelectedSize} />
             </div>
 
-            <ProductAccordion items={accordionItems} />
+            {accordionItems.length > 0 ? <ProductAccordion items={accordionItems} /> : null}
           </div>
 
           <div className="fixed inset-x-0 bottom-0 border-t border-accent bg-background p-5">
