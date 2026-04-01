@@ -1,15 +1,22 @@
 import Link from 'next/link';
 import { ProductCard } from '@/components/product/ProductCard';
+import { listProducts } from '@/lib/catalog-repository';
 import { categoryOrder, getLocalizedPath, type Category, type Locale, ui } from '@/lib/i18n';
-import { getLocalizedProduct, products } from '@/lib/products';
+import { getLocalizedProduct } from '@/lib/products';
 
-export default function CatalogPage({ params, searchParams }: { params: { locale: Locale }; searchParams: { category?: string } }) {
+export const dynamic = 'force-dynamic';
+
+export default async function CatalogPage({ params, searchParams }: { params: { locale: Locale }; searchParams: { category?: string } }) {
   const locale = params.locale;
   const copy = ui[locale];
   const activeFilter = (searchParams.category as Category | 'all' | undefined) || 'all';
   const filters = [{ value: 'all', label: copy.allFilter }, ...categoryOrder.map((category) => ({ value: category, label: copy[category] }))];
 
-  const filteredProducts = (activeFilter === 'all' ? products : products.filter((product) => product.category === activeFilter)).map((product) => getLocalizedProduct(product, locale));
+  const filteredProducts = (
+    await listProducts({
+      category: activeFilter === 'all' ? undefined : activeFilter,
+    })
+  ).map((product) => getLocalizedProduct(product, locale));
 
   return (
     <div className="min-h-screen">

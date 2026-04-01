@@ -1,6 +1,8 @@
-﻿import type { Category } from '@/lib/i18n';
+import type { Category } from '@/lib/i18n';
 import { products, type Product } from '@/lib/products';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { unstable_noStore as noStore } from 'next/cache';
+import { cache } from 'react';
 
 interface ProductImageRow {
   url: string;
@@ -67,16 +69,16 @@ function mapSupabaseRowToProduct(row: ProductRow): Product {
         description: row.description_ua,
         composition: row.composition_ua,
         care: row.care_ua || fallbackCare('ua'),
-        delivery: row.delivery_ua || fallbackDelivery('ua')
+        delivery: row.delivery_ua || fallbackDelivery('ua'),
       },
       en: {
         name: row.name_en,
         description: row.description_en,
         composition: row.composition_en,
         care: row.care_en || fallbackCare('en'),
-        delivery: row.delivery_en || fallbackDelivery('en')
-      }
-    }
+        delivery: row.delivery_en || fallbackDelivery('en'),
+      },
+    },
   };
 }
 
@@ -99,6 +101,8 @@ function applyFilters(items: Product[], options: ListProductsOptions) {
 }
 
 export async function listProducts(options: ListProductsOptions = {}) {
+  noStore();
+
   const supabase = createSupabaseServerClient();
   if (!supabase) {
     return applyFilters(products, options);
@@ -117,16 +121,16 @@ export async function listProducts(options: ListProductsOptions = {}) {
 
     const { data, error } = await query;
     if (error || !data) {
-      return applyFilters(products, options);
+      return [];
     }
 
     return (data as ProductRow[]).map(mapSupabaseRowToProduct);
   } catch {
-    return applyFilters(products, options);
+    return [];
   }
 }
 
-export async function getProductBySlug(slug: string) {
+const getProductBySlugCached = cache(async (slug: string) => {
   const supabase = createSupabaseServerClient();
   if (!supabase) {
     return products.find((product) => product.slug === slug) ?? null;
@@ -141,11 +145,16 @@ export async function getProductBySlug(slug: string) {
       .single();
 
     if (error || !data) {
-      return products.find((product) => product.slug === slug) ?? null;
+      return null;
     }
 
     return mapSupabaseRowToProduct(data as ProductRow);
   } catch {
-    return products.find((product) => product.slug === slug) ?? null;
+    return null;
   }
+});
+
+export async function getProductBySlug(slug: string) {
+  noStore();
+  return getProductBySlugCached(slug);
 }
