@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { getCurrencyLabel, type Locale, ui } from '@/lib/i18n';
+import { ADMIN_ERROR_CODES, isTaggedError } from '@/lib/admin-errors';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
-import { AdminDataAccessError, listAdminProducts, type AdminProductRecord } from '@/lib/admin-products';
+import { listAdminProducts, type AdminProductRecord } from '@/lib/admin-products';
 
 export default async function AdminPage({ params }: { params: { locale: Locale } }) {
   const locale = params.locale;
@@ -15,7 +16,7 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
     items = await listAdminProducts();
   } catch (error) {
     items = [];
-    loadError = error instanceof AdminDataAccessError
+    loadError = isTaggedError(error, ADMIN_ERROR_CODES.dataAccess)
       ? error.message
       : error instanceof Error
         ? error.message

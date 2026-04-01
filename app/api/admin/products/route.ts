@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { buildAdminLoginRedirect, buildAdminRedirectUrl, hasAdminAccess } from '@/lib/admin-auth';
-import { AdminConfigurationError, createAdminProduct } from '@/lib/admin-products';
+import { ADMIN_ERROR_CODES, isTaggedError } from '@/lib/admin-errors';
+import { createAdminProduct } from '@/lib/admin-products';
 import { parseAdminProductForm } from '@/lib/admin-form';
 
 export async function POST(request: NextRequest) {
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     const id = await createAdminProduct(input);
     return NextResponse.redirect(buildAdminRedirectUrl(request, `/${locale}/admin/products/${id}`, { saved: '1' }));
   } catch (error) {
-    const message = error instanceof AdminConfigurationError
+    const message = isTaggedError(error, ADMIN_ERROR_CODES.configuration)
       ? 'Supabase admin credentials are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to continue.'
       : error instanceof Error
         ? error.message

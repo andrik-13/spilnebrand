@@ -1,6 +1,7 @@
 import type { Category, ColorKey, Locale } from '@/lib/i18n';
 import { products, type Product } from '@/lib/products';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
+import { ADMIN_ERROR_CODES, createTaggedError } from '@/lib/admin-errors';
 
 export interface AdminProductInput {
   slug: string;
@@ -49,20 +50,6 @@ interface ProductRow {
   delivery_ua?: string | null;
   delivery_en?: string | null;
   product_images?: ProductImageRow[] | null;
-}
-
-export class AdminConfigurationError extends Error {
-  constructor(message = 'Supabase admin client is not configured.') {
-    super(message);
-    this.name = 'AdminConfigurationError';
-  }
-}
-
-export class AdminDataAccessError extends Error {
-  constructor(message = 'Admin data could not be loaded from Supabase.') {
-    super(message);
-    this.name = 'AdminDataAccessError';
-  }
 }
 
 function fallbackCare(locale: Locale) {
@@ -122,7 +109,7 @@ function requireAdminClient() {
   const client = createSupabaseAdminClient();
 
   if (!client) {
-    throw new AdminConfigurationError();
+    throw createTaggedError(ADMIN_ERROR_CODES.configuration, 'Supabase admin client is not configured.');
   }
 
   return client;
@@ -232,7 +219,7 @@ export async function listAdminProducts() {
     .order('created_at', { ascending: false });
 
   if (error || !data) {
-    throw new AdminDataAccessError(error?.message || 'Failed to load admin products from Supabase.');
+    throw createTaggedError(ADMIN_ERROR_CODES.dataAccess, error?.message || 'Failed to load admin products from Supabase.');
   }
 
   return (data as ProductRow[]).map(mapSupabaseRowToAdminProduct);
@@ -252,7 +239,7 @@ export async function getAdminProductById(id: string) {
     .single();
 
   if (error || !data) {
-    throw new AdminDataAccessError(error?.message || 'Failed to load product from Supabase.');
+    throw createTaggedError(ADMIN_ERROR_CODES.dataAccess, error?.message || 'Failed to load product from Supabase.');
   }
 
   return mapSupabaseRowToAdminProduct(data as ProductRow);

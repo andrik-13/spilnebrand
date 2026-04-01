@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { hasAdminAccess } from '@/lib/admin-auth';
-import { AdminStorageConfigurationError, uploadAdminProductImage } from '@/lib/admin-storage';
+import { ADMIN_ERROR_CODES, isTaggedError } from '@/lib/admin-errors';
+import { uploadAdminProductImage } from '@/lib/admin-storage';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     const url = await uploadAdminProductImage(file, slug);
     return NextResponse.json({ url });
   } catch (error) {
-    const message = error instanceof AdminStorageConfigurationError
+    const message = isTaggedError(error, ADMIN_ERROR_CODES.storageConfiguration)
       ? error.message
       : error instanceof Error
         ? error.message
