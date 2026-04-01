@@ -25,7 +25,7 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
   return (
     <div className="mx-auto max-w-[1280px] px-5 py-12 md:px-[80px]">
       <p className="mb-2 text-[13px] uppercase tracking-[2px] text-muted">{copy.adminTitle}</p>
-      <h2 className="mb-4">Catalog admin</h2>
+      <h2 className="mb-4 font-sans text-4xl tracking-[-0.02em]">Catalog admin</h2>
       <p className="mb-8 max-w-2xl text-muted">{copy.adminText}</p>
 
       <div className="mb-6 flex flex-wrap gap-3">
@@ -61,9 +61,9 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
           <div key={product.id} className="flex flex-col gap-4 border border-accent bg-white/40 p-4 md:flex-row md:items-center md:justify-between">
             <div>
               <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
-              <div className="mt-2 text-xl">{product.translations[locale].name}</div>
+              <div className="mt-2 text-xl font-sans">{product.translations[locale].name}</div>
               <div className="mt-1 text-muted">{product.slug}</div>
-              <div className="mt-1 text-sm text-muted">{getCurrencyLabel(product.price, locale)} вЂў {product.isActive ? 'Visible' : 'Hidden'}</div>
+              <div className="mt-1 text-sm text-muted">{getCurrencyLabel(product.price, locale)} / {product.isActive ? 'Visible' : 'Hidden'}</div>
             </div>
 
             <Link

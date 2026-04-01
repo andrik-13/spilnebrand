@@ -1,4 +1,4 @@
-﻿export type Locale = 'ua' | 'en';
+export type Locale = 'ua' | 'en';
 export type Category = 'tops' | 'bottoms' | 'sets';
 export type ColorKey = 'black' | 'beige' | 'gray' | 'white';
 
@@ -60,7 +60,7 @@ export const ui = {
     footerDelivery: 'Нова Пошта та Укрпошта по всій Україні',
     galleryAlt: "Образи SPIL'NE",
     adminTitle: 'Admin',
-    adminText: 'Тимчасова сторінка управління каталогом до підключення Supabase.',
+    adminText: 'Панель керування каталогом, товарами та зображеннями.',
     black: 'Чорний',
     beige: 'Бежевий',
     gray: 'Сірий',
@@ -106,7 +106,7 @@ export const ui = {
     footerDelivery: 'Nova Poshta and Ukrposhta across Ukraine',
     galleryAlt: "SPIL'NE looks",
     adminTitle: 'Admin',
-    adminText: 'Temporary catalog management page until Supabase is connected.',
+    adminText: 'Catalog management panel for products and images.',
     black: 'Black',
     beige: 'Beige',
     gray: 'Gray',
