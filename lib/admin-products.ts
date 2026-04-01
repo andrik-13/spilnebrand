@@ -53,18 +53,6 @@ function toOptionalText(value?: string | null) {
   return value ?? undefined;
 }
 
-function fallbackCare(locale: Locale) {
-  return locale === 'ua'
-    ? 'Делікатне прання при 30°C. Сушити природним способом.'
-    : 'Delicate wash at 30°C. Air dry naturally.';
-}
-
-function fallbackDelivery(locale: Locale) {
-  return locale === 'ua'
-    ? 'Доставка по Україні Новою Поштою або Укрпоштою після підтвердження замовлення.'
-    : 'Delivery across Ukraine via Nova Poshta or Ukrposhta after order confirmation.';
-}
-
 function mapSupabaseRowToAdminProduct(row: ProductRow): AdminProductRecord {
   const images = [...(row.product_images ?? [])]
     .sort((a, b) => a.position - b.position)
@@ -329,4 +317,3 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
 
   await syncProductImages(client, id, images);
 }
-
