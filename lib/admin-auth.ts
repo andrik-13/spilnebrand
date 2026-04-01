@@ -12,15 +12,9 @@ export function hasAdminAccess(request: NextRequest) {
 }
 
 export function getRequestOrigin(request: Request | NextRequest) {
-  const originHeader = request.headers.get('origin');
-
-  if (originHeader) {
-    return originHeader;
-  }
-
   const forwardedHost = request.headers.get('x-forwarded-host');
   const host = forwardedHost || request.headers.get('host');
-  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  const protocol = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(/:$/, '');
 
   if (host) {
     return `${protocol}://${host}`;
