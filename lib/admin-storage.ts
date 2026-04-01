@@ -26,16 +26,6 @@ function sanitizeFileName(name: string) {
     .replace(/^-|-$/g, '');
 }
 
-function getPublicBaseUrl() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (!url) {
-    throw new AdminStorageConfigurationError('NEXT_PUBLIC_SUPABASE_URL is required for public storage URLs.');
-  }
-
-  return `${url.replace(/\/$/, '')}/storage/v1/object/public`;
-}
-
 export async function uploadAdminProductImage(file: File, slugHint?: string) {
   const { client, bucket } = requireStorageClient();
   const bytes = Buffer.from(await file.arrayBuffer());
@@ -56,5 +46,11 @@ export async function uploadAdminProductImage(file: File, slugHint?: string) {
     throw new Error(error.message || 'Failed to upload image.');
   }
 
-  return `${getPublicBaseUrl()}/${bucket}/${path}`;
+  const { data } = client.storage.from(bucket).getPublicUrl(path);
+
+  if (!data.publicUrl) {
+    throw new Error('Failed to resolve public image URL.');
+  }
+
+  return data.publicUrl;
 }
