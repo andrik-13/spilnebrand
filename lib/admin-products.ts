@@ -49,6 +49,10 @@ interface ProductRow {
   product_images?: ProductImageRow[] | null;
 }
 
+function toOptionalText(value?: string | null) {
+  return value ?? undefined;
+}
+
 function fallbackCare(locale: Locale) {
   return locale === 'ua'
     ? 'Делікатне прання при 30°C. Сушити природним способом.'
@@ -325,3 +329,4 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
 
   await syncProductImages(client, id, images);
 }
+
