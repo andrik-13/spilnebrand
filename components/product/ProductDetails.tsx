@@ -19,11 +19,15 @@ function findColorImageIndex(images: string[], color: string) {
     black: ['black'],
     beige: ['beige'],
     gray: ['gray', 'graphite'],
-    white: ['white']
+    white: ['white'],
+    red: ['red']
   };
 
   const terms = aliases[color] ?? [color];
-  const index = images.findIndex((image) => terms.some((term) => image.toLowerCase().includes(term)));
+  const index = images.findIndex((image) => {
+    const tokens = image.toLowerCase().split(/[\\/._\-\s]+/).filter(Boolean);
+    return terms.some((term) => tokens.includes(term));
+  });
   return index >= 0 ? index : 0;
 }
 

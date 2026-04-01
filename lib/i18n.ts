@@ -1,6 +1,6 @@
 export type Locale = 'ua' | 'en';
 export type Category = 'tops' | 'bottoms' | 'sets';
-export type ColorKey = 'black' | 'beige' | 'gray' | 'white';
+export type ColorKey = 'black' | 'beige' | 'gray' | 'white' | 'red';
 
 export const locales: Locale[] = ['ua', 'en'];
 
@@ -67,7 +67,8 @@ export const ui = {
     black: 'Чорний',
     beige: 'Бежевий',
     gray: 'Сірий',
-    white: 'Білий'
+    white: 'Білий',
+    red: 'Червоний'
   },
   en: {
     brand: "SPIL'NE",
@@ -116,7 +117,8 @@ export const ui = {
     black: 'Black',
     beige: 'Beige',
     gray: 'Gray',
-    white: 'White'
+    white: 'White',
+    red: 'Red'
   }
 } as const;
 
