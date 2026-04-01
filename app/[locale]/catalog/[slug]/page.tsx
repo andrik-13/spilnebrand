@@ -1,7 +1,7 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { ProductDetails } from '@/components/product/ProductDetails';
-import { getLocalizedPath, type Locale, ui } from '@/lib/i18n';
+import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct, getProductBySlug, products } from '@/lib/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -13,11 +13,12 @@ export function generateStaticParams() {
   ]);
 }
 
-export function generateMetadata({ params }: { params: { locale: Locale; slug: string } }): Metadata {
+export function generateMetadata({ params }: { params: { locale: string; slug: string } }): Metadata {
   const product = getProductBySlug(params.slug);
   if (!product) return {};
 
-  const localized = getLocalizedProduct(product, params.locale);
+  const locale = isLocale(params.locale) ? params.locale : 'ua';
+  const localized = getLocalizedProduct(product, locale);
   return {
     title: `${localized.name} | SPIL'NE`,
     description: localized.description,

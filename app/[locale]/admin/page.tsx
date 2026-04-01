@@ -1,4 +1,4 @@
-﻿import { type Locale, ui } from '@/lib/i18n';
+import { type Locale, ui } from '@/lib/i18n';
 import { listProducts } from '@/lib/catalog-repository';
 
 export default async function AdminPage({ params }: { params: { locale: Locale } }) {

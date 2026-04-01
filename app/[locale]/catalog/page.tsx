@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { ProductCard } from '@/components/product/ProductCard';
 import { categoryOrder, getLocalizedPath, type Category, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct, products } from '@/lib/products';
