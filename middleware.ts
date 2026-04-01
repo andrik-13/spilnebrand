@@ -1,7 +1,6 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-const ADMIN_COOKIE = 'spilne_admin';
+import { buildAdminLoginRedirect, hasAdminAccess } from '@/lib/admin-auth';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,16 +18,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isAuthorized = request.cookies.get(ADMIN_COOKIE)?.value === '1';
-  if (isAuthorized) {
+  if (hasAdminAccess(request)) {
     return NextResponse.next();
   }
 
   const locale = pathname.split('/')[1] || 'ua';
-  const loginUrl = request.nextUrl.clone();
-  loginUrl.pathname = `/${locale}/admin/login`;
-  loginUrl.searchParams.set('next', pathname);
-  return NextResponse.redirect(loginUrl);
+  return buildAdminLoginRedirect(request, locale, pathname);
 }
 
 export const config = {

@@ -1,6 +1,5 @@
-﻿import { NextResponse } from 'next/server';
-
-const ADMIN_COOKIE = 'spilne_admin';
+import { NextResponse } from 'next/server';
+import { ADMIN_COOKIE } from '@/lib/admin-auth';
 
 export async function POST(request: Request) {
   const referer = request.headers.get('referer');
