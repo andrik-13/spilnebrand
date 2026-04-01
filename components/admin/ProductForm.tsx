@@ -232,14 +232,7 @@ export function ProductForm({
         <textarea
           name="images"
           value={images.join('\n')}
-          onChange={(event) =>
-            setImages(
-              event.target.value
-                .split('\n')
-                .map((value) => value.trim())
-                .filter(Boolean),
-            )
-          }
+          onChange={(event) => setImages(event.target.value.split('\n'))}
           rows={6}
           className="w-full border border-accent bg-white px-4 py-3 font-mono text-sm outline-none"
           placeholder="/catalog/tee/white-main.jpg"
