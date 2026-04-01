@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { ADMIN_COOKIE } from '@/lib/admin-auth';
+import { ADMIN_COOKIE, getRequestOrigin } from '@/lib/admin-auth';
 
 export async function POST(request: Request) {
   const referer = request.headers.get('referer');
-  const redirectUrl = new URL(referer || '/', request.url);
+  const redirectUrl = referer ? new URL(referer) : new URL('/', getRequestOrigin(request));
   const response = NextResponse.redirect(redirectUrl);
 
   response.cookies.set(ADMIN_COOKIE, '', {

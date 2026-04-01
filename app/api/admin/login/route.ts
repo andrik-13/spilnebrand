@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ADMIN_COOKIE } from '@/lib/admin-auth';
+import { ADMIN_COOKIE, getRequestOrigin } from '@/lib/admin-auth';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
   const redirectUrl = new URL(
     password && adminPassword && password === adminPassword ? nextPath : `/${locale}/admin/login?error=1`,
-    request.url
+    getRequestOrigin(request)
   );
 
   const response = NextResponse.redirect(redirectUrl);

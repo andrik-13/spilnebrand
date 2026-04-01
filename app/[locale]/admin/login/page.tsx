@@ -10,7 +10,7 @@ export default function AdminLoginPage({ params, searchParams }: { params: { loc
       <div className="w-full border border-accent bg-white/60 p-6 md:p-8">
         <p className="mb-2 text-[13px] uppercase tracking-[2px] text-muted">Admin Login</p>
         <h2 className="mb-3">Protected access</h2>
-        <p className="mb-6 text-muted">This login is temporary and uses `ADMIN_PASSWORD` from your local environment.</p>
+        <p className="mb-6 text-muted">This login is temporary and uses `ADMIN_PASSWORD` from the current environment.</p>
 
         <form action="/api/admin/login" method="post" className="space-y-4">
           <input type="hidden" name="locale" value={locale} />
