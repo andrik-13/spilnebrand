@@ -3,6 +3,7 @@ import { ADMIN_ERROR_CODES, createTaggedError } from '@/lib/admin-errors';
 
 const mimeExtensions = {
   'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
   'image/gif': 'gif',
