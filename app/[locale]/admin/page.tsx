@@ -1,13 +1,26 @@
 import Link from 'next/link';
-import { type Locale, ui } from '@/lib/i18n';
+import { getCurrencyLabel, type Locale, ui } from '@/lib/i18n';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
-import { listAdminProducts } from '@/lib/admin-products';
+import { AdminDataAccessError, listAdminProducts, type AdminProductRecord } from '@/lib/admin-products';
 
 export default async function AdminPage({ params }: { params: { locale: Locale } }) {
   const locale = params.locale;
   const copy = ui[locale];
-  const items = await listAdminProducts();
   const hasLiveDatabase = Boolean(createSupabaseAdminClient());
+
+  let items: AdminProductRecord[] = [];
+  let loadError: string | null = null;
+
+  try {
+    items = await listAdminProducts();
+  } catch (error) {
+    items = [];
+    loadError = error instanceof AdminDataAccessError
+      ? error.message
+      : error instanceof Error
+        ? error.message
+        : 'Failed to load admin products.';
+  }
 
   return (
     <div className="mx-auto max-w-[1280px] px-5 py-12 md:px-[80px]">
@@ -33,9 +46,15 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
         </form>
       </div>
 
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-4 text-sm text-muted">
         Source: {hasLiveDatabase ? 'Supabase' : 'seed fallback'}
       </p>
+
+      {loadError ? (
+        <p className="mb-8 rounded border border-[#c77f6f] bg-[#f7e5df] px-4 py-3 text-sm text-[#9b3d2f]">
+          {loadError}
+        </p>
+      ) : null}
 
       <div className="space-y-4">
         {items.map((product) => (
@@ -44,7 +63,7 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
               <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
               <div className="mt-2 text-xl">{product.translations[locale].name}</div>
               <div className="mt-1 text-muted">{product.slug}</div>
-              <div className="mt-1 text-sm text-muted">{product.price} грн • {product.isActive ? 'Visible' : 'Hidden'}</div>
+              <div className="mt-1 text-sm text-muted">{getCurrencyLabel(product.price, locale)} вЂў {product.isActive ? 'Visible' : 'Hidden'}</div>
             </div>
 
             <Link

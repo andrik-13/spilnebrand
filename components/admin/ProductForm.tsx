@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { categoryOrder, type ColorKey, type Locale, locales, ui } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
 
@@ -197,12 +198,12 @@ export function ProductForm({
         </button>
 
         {mode === 'edit' ? (
-          <a
+          <Link
             href={`/${locale}/admin`}
             className="inline-flex items-center justify-center border border-dark px-8 py-4 text-[14px] uppercase tracking-[1.5px] text-dark transition-colors hover:bg-dark hover:text-white"
           >
             Back to admin
-          </a>
+          </Link>
         ) : null}
       </div>
     </form>

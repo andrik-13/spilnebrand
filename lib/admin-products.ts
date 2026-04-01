@@ -58,6 +58,13 @@ export class AdminConfigurationError extends Error {
   }
 }
 
+export class AdminDataAccessError extends Error {
+  constructor(message = 'Admin data could not be loaded from Supabase.') {
+    super(message);
+    this.name = 'AdminDataAccessError';
+  }
+}
+
 function fallbackCare(locale: Locale) {
   return locale === 'ua'
     ? 'Делікатне прання при 30°C. Сушити природним способом.'
@@ -127,6 +134,48 @@ function normalizeImageList(images: string[]) {
     .filter(Boolean);
 }
 
+async function syncProductImages(client: ReturnType<typeof requireAdminClient>, productId: string, nextImages: string[]) {
+  const { data: existingImages, error: existingImagesError } = await client
+    .from('product_images')
+    .select('url,position')
+    .eq('product_id', productId)
+    .order('position', { ascending: true });
+
+  if (existingImagesError) {
+    throw new Error(existingImagesError.message || 'Failed to load existing product images.');
+  }
+
+  const { error: deleteImagesError } = await client
+    .from('product_images')
+    .delete()
+    .eq('product_id', productId);
+
+  if (deleteImagesError) {
+    throw new Error(deleteImagesError.message || 'Failed to reset product images.');
+  }
+
+  if (nextImages.length === 0) {
+    return;
+  }
+
+  const { error: insertImagesError } = await client
+    .from('product_images')
+    .insert(nextImages.map((url, position) => ({ product_id: productId, url, position })));
+
+  if (!insertImagesError) {
+    return;
+  }
+
+  const previousImages = (existingImages ?? []) as ProductImageRow[];
+  if (previousImages.length > 0) {
+    await client
+      .from('product_images')
+      .insert(previousImages.map((image) => ({ product_id: productId, url: image.url, position: image.position })));
+  }
+
+  throw new Error(insertImagesError.message || 'Failed to save product images.');
+}
+
 export function getEmptyAdminProductInput(): AdminProductInput {
   return {
     slug: '',
@@ -183,7 +232,7 @@ export async function listAdminProducts() {
     .order('created_at', { ascending: false });
 
   if (error || !data) {
-    return products.map(mapSeedProduct);
+    throw new AdminDataAccessError(error?.message || 'Failed to load admin products from Supabase.');
   }
 
   return (data as ProductRow[]).map(mapSupabaseRowToAdminProduct);
@@ -203,7 +252,7 @@ export async function getAdminProductById(id: string) {
     .single();
 
   if (error || !data) {
-    return null;
+    throw new AdminDataAccessError(error?.message || 'Failed to load product from Supabase.');
   }
 
   return mapSupabaseRowToAdminProduct(data as ProductRow);
@@ -241,14 +290,11 @@ export async function createAdminProduct(input: AdminProductInput) {
     throw new Error(error?.message || 'Failed to create product.');
   }
 
-  if (images.length > 0) {
-    const { error: imageError } = await client
-      .from('product_images')
-      .insert(images.map((url, position) => ({ product_id: data.id, url, position })));
-
-    if (imageError) {
-      throw new Error(imageError.message || 'Failed to save product images.');
-    }
+  try {
+    await syncProductImages(client, data.id as string, images);
+  } catch (syncError) {
+    await client.from('products').delete().eq('id', data.id);
+    throw syncError;
   }
 
   return data.id as string;
@@ -285,22 +331,5 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
     throw new Error(error.message || 'Failed to update product.');
   }
 
-  const { error: deleteImagesError } = await client
-    .from('product_images')
-    .delete()
-    .eq('product_id', id);
-
-  if (deleteImagesError) {
-    throw new Error(deleteImagesError.message || 'Failed to reset product images.');
-  }
-
-  if (images.length > 0) {
-    const { error: insertImagesError } = await client
-      .from('product_images')
-      .insert(images.map((url, position) => ({ product_id: id, url, position })));
-
-    if (insertImagesError) {
-      throw new Error(insertImagesError.message || 'Failed to save product images.');
-    }
-  }
+  await syncProductImages(client, id, images);
 }

@@ -1,4 +1,4 @@
-import type { Category, ColorKey, Locale } from '@/lib/i18n';
+import { locales, type Category, type ColorKey, type Locale } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
 
 const allowedCategories: Category[] = ['tops', 'bottoms', 'sets'];
@@ -54,6 +54,10 @@ export function parseAdminProductForm(formData: FormData): AdminProductInput {
     delivery: getString(formData, `delivery_${locale}`),
   });
 
+  const translations = Object.fromEntries(
+    locales.map((locale) => [locale, buildTranslation(locale)])
+  ) as AdminProductInput['translations'];
+
   const input: AdminProductInput = {
     slug: getString(formData, 'slug'),
     category,
@@ -63,18 +67,16 @@ export function parseAdminProductForm(formData: FormData): AdminProductInput {
     isNew: formData.get('isNew') === 'on',
     isActive: formData.get('isActive') === 'on',
     images,
-    translations: {
-      ua: buildTranslation('ua'),
-      en: buildTranslation('en'),
-    },
+    translations,
   };
 
   if (!input.slug) {
     throw new Error('Slug is required.');
   }
 
-  if (!input.translations.ua.name || !input.translations.en.name) {
-    throw new Error('Both UA and EN names are required.');
+  const hasMissingName = locales.some((locale) => !input.translations[locale].name);
+  if (hasMissingName) {
+    throw new Error('Names are required for every supported locale.');
   }
 
   return input;
