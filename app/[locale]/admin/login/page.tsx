@@ -1,11 +1,6 @@
-import { notFound } from 'next/navigation';
-import { isLocale } from '@/lib/i18n';
+import { type Locale } from '@/lib/i18n';
 
-export default function AdminLoginPage({ params, searchParams }: { params: { locale: string }; searchParams: { next?: string; error?: string } }) {
-  if (!isLocale(params.locale)) {
-    notFound();
-  }
-
+export default function AdminLoginPage({ params, searchParams }: { params: { locale: Locale }; searchParams: { next?: string; error?: string } }) {
   const locale = params.locale;
   const hasError = searchParams.error === '1';
   const nextPath = searchParams.next || `/${locale}/admin`;

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { ProductDetails } from '@/components/product/ProductDetails';
-import { getLocalizedPath, isLocale, ui } from '@/lib/i18n';
+import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct, getProductBySlug, products } from '@/lib/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -26,11 +26,7 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
   };
 }
 
-export default function ProductPage({ params }: { params: { locale: string; slug: string } }) {
-  if (!isLocale(params.locale)) {
-    notFound();
-  }
-
+export default function ProductPage({ params }: { params: { locale: Locale; slug: string } }) {
   const locale = params.locale;
   const copy = ui[locale];
   const product = getProductBySlug(params.slug);
