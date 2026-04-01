@@ -1,18 +1,28 @@
+import Link from 'next/link';
 import { type Locale, ui } from '@/lib/i18n';
-import { listProducts } from '@/lib/catalog-repository';
+import { createSupabaseAdminClient } from '@/lib/supabase-server';
+import { listAdminProducts } from '@/lib/admin-products';
 
 export default async function AdminPage({ params }: { params: { locale: Locale } }) {
   const locale = params.locale;
   const copy = ui[locale];
-  const items = await listProducts();
+  const items = await listAdminProducts();
+  const hasLiveDatabase = Boolean(createSupabaseAdminClient());
 
   return (
     <div className="mx-auto max-w-[1280px] px-5 py-12 md:px-[80px]">
       <p className="mb-2 text-[13px] uppercase tracking-[2px] text-muted">{copy.adminTitle}</p>
-      <h2 className="mb-4">Catalog source preview</h2>
+      <h2 className="mb-4">Catalog admin</h2>
       <p className="mb-8 max-w-2xl text-muted">{copy.adminText}</p>
 
       <div className="mb-6 flex flex-wrap gap-3">
+        <Link
+          href={`/${locale}/admin/products/new`}
+          className="inline-flex items-center justify-center bg-dark px-6 py-3 text-[13px] uppercase tracking-[2px] text-white transition-colors hover:bg-primary"
+        >
+          Add product
+        </Link>
+
         <form action="/api/admin/logout" method="post">
           <button
             type="submit"
@@ -23,12 +33,26 @@ export default async function AdminPage({ params }: { params: { locale: Locale }
         </form>
       </div>
 
+      <p className="mb-8 text-sm text-muted">
+        Source: {hasLiveDatabase ? 'Supabase' : 'seed fallback'}
+      </p>
+
       <div className="space-y-4">
         {items.map((product) => (
-          <div key={product.id} className="border border-accent bg-white/40 p-4">
-            <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
-            <div className="mt-2 text-xl">{product.translations[locale].name}</div>
-            <div className="mt-1 text-muted">{product.slug}</div>
+          <div key={product.id} className="flex flex-col gap-4 border border-accent bg-white/40 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
+              <div className="mt-2 text-xl">{product.translations[locale].name}</div>
+              <div className="mt-1 text-muted">{product.slug}</div>
+              <div className="mt-1 text-sm text-muted">{product.price} грн • {product.isActive ? 'Visible' : 'Hidden'}</div>
+            </div>
+
+            <Link
+              href={`/${locale}/admin/products/${product.id}`}
+              className="inline-flex items-center justify-center border border-dark px-5 py-3 text-[13px] uppercase tracking-[2px] text-dark transition-colors hover:bg-dark hover:text-white"
+            >
+              Edit
+            </Link>
           </div>
         ))}
       </div>
