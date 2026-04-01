@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 import { categoryOrder, type ColorKey, type Locale, locales, ui } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
 
@@ -27,6 +30,53 @@ export function ProductForm({
   success,
 }: ProductFormProps) {
   const copy = ui[locale];
+  const [images, setImages] = useState(product.images);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const defaultSlug = useMemo(() => product.slug || product.translations.en.name || product.translations.ua.name || 'product', [product]);
+
+  async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.set('locale', locale);
+      formData.set('slug', defaultSlug);
+      formData.set('file', file);
+
+      const response = await fetch('/api/admin/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = (await response.json()) as { url?: string; error?: string };
+
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || 'Upload failed.');
+      }
+
+      setImages((current) => [...current, payload.url as string]);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Upload failed.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }
+
+  function removeImage(index: number) {
+    setImages((current) => current.filter((_, itemIndex) => itemIndex !== index));
+  }
 
   return (
     <form action={action} method="post" className="space-y-8">
@@ -181,13 +231,46 @@ export function ProductForm({
         <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Image URLs</span>
         <textarea
           name="images"
-          defaultValue={product.images.join('\n')}
+          value={images.join('\n')}
+          onChange={(event) => setImages(event.target.value.split('\n'))}
           rows={6}
           className="w-full border border-accent bg-white px-4 py-3 font-mono text-sm outline-none"
           placeholder="/catalog/tee/white-main.jpg"
         />
-        <span className="mt-2 block text-sm text-muted">One URL per line. This is the foundation step before adding file uploads to Supabase Storage.</span>
+        <span className="mt-2 block text-sm text-muted">One URL per line. You can also upload directly to Supabase Storage below.</span>
       </label>
+
+      <div className="space-y-4 border border-accent bg-white/50 p-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            className="max-w-full text-sm text-primary"
+          />
+          <span className="text-sm text-muted">{isUploading ? 'Uploading image...' : 'Upload sends the file to the product-images bucket.'}</span>
+        </div>
+
+        {uploadError ? <p className="text-sm text-[#9b3d2f]">{uploadError}</p> : null}
+
+        {images.length > 0 ? (
+          <div className="space-y-2">
+            {images.map((image, index) => (
+              <div key={`${image}-${index}`} className="flex flex-col gap-2 border border-accent bg-white px-3 py-3 md:flex-row md:items-center md:justify-between">
+                <span className="truncate font-mono text-sm text-muted">{image}</span>
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="inline-flex cursor-pointer items-center justify-center border border-dark px-4 py-2 text-[12px] uppercase tracking-[1.5px] text-dark transition-colors hover:bg-dark hover:text-white"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <button
