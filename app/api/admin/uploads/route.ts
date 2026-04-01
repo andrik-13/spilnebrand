@@ -5,6 +5,7 @@ import { ADMIN_ERROR_CODES, isTaggedError } from '@/lib/admin-errors';
 import { uploadAdminProductImage } from '@/lib/admin-storage';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']);
 
 export async function POST(request: NextRequest) {
   if (!hasAdminAccess(request)) {
@@ -21,6 +22,10 @@ export async function POST(request: NextRequest) {
 
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json({ error: 'File is too large (max 10MB).' }, { status: 400 });
+  }
+
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return NextResponse.json({ error: 'Only JPG, PNG, WEBP, GIF, and AVIF images are allowed.' }, { status: 400 });
   }
 
   try {
