@@ -48,6 +48,10 @@ interface ProductRow {
   product_images?: ProductImageRow[] | null;
 }
 
+function toOptionalText(value?: string | null) {
+  return value ?? undefined;
+}
+
 export class AdminConfigurationError extends Error {
   constructor(message = 'Supabase admin client is not configured.') {
     super(message);
@@ -81,14 +85,14 @@ function mapSupabaseRowToAdminProduct(row: ProductRow): AdminProductRecord {
       ua: {
         name: row.name_ua,
         description: row.description_ua,
-        composition: row.composition_ua || undefined,
-        care: row.care_ua || undefined,
+        composition: toOptionalText(row.composition_ua),
+        care: toOptionalText(row.care_ua),
       },
       en: {
         name: row.name_en,
         description: row.description_en,
-        composition: row.composition_en || undefined,
-        care: row.care_en || undefined,
+        composition: toOptionalText(row.composition_en),
+        care: toOptionalText(row.care_en),
       },
     },
   };

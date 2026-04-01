@@ -194,7 +194,7 @@ export function ProductForm({
               <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Composition</span>
               <textarea
                 name={`composition_${entryLocale}`}
-                defaultValue={product.translations[entryLocale].composition ?? ''}
+                defaultValue={product.translations[entryLocale].composition}
                 rows={3}
                 className="w-full border border-accent bg-white px-4 py-3 outline-none"
               />
@@ -204,7 +204,7 @@ export function ProductForm({
               <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Care</span>
               <textarea
                 name={`care_${entryLocale}`}
-                defaultValue={product.translations[entryLocale].care ?? ''}
+                defaultValue={product.translations[entryLocale].care}
                 rows={3}
                 className="w-full border border-accent bg-white px-4 py-3 outline-none"
               />
