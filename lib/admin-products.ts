@@ -15,7 +15,6 @@ export interface AdminProductInput {
     description: string;
     composition: string;
     care: string;
-    delivery: string;
   }>;
   images: string[];
 }
@@ -42,13 +41,15 @@ interface ProductRow {
   name_en: string;
   description_ua: string;
   description_en: string;
-  composition_ua: string;
-  composition_en: string;
+  composition_ua?: string | null;
+  composition_en?: string | null;
   care_ua?: string | null;
   care_en?: string | null;
-  delivery_ua?: string | null;
-  delivery_en?: string | null;
   product_images?: ProductImageRow[] | null;
+}
+
+function toOptionalText(value?: string | null) {
+  return value ?? undefined;
 }
 
 export class AdminConfigurationError extends Error {
@@ -63,18 +64,6 @@ export class AdminDataAccessError extends Error {
     super(message);
     this.name = 'AdminDataAccessError';
   }
-}
-
-function fallbackCare(locale: Locale) {
-  return locale === 'ua'
-    ? 'Делікатне прання при 30°C. Сушити природним способом.'
-    : 'Delicate wash at 30°C. Air dry naturally.';
-}
-
-function fallbackDelivery(locale: Locale) {
-  return locale === 'ua'
-    ? 'Доставка по Україні Новою Поштою або Укрпоштою після підтвердження замовлення.'
-    : 'Delivery across Ukraine via Nova Poshta or Ukrposhta after order confirmation.';
 }
 
 function mapSupabaseRowToAdminProduct(row: ProductRow): AdminProductRecord {
@@ -96,16 +85,14 @@ function mapSupabaseRowToAdminProduct(row: ProductRow): AdminProductRecord {
       ua: {
         name: row.name_ua,
         description: row.description_ua,
-        composition: row.composition_ua,
-        care: row.care_ua || fallbackCare('ua'),
-        delivery: row.delivery_ua || fallbackDelivery('ua'),
+        composition: toOptionalText(row.composition_ua),
+        care: toOptionalText(row.care_ua),
       },
       en: {
         name: row.name_en,
         description: row.description_en,
-        composition: row.composition_en,
-        care: row.care_en || fallbackCare('en'),
-        delivery: row.delivery_en || fallbackDelivery('en'),
+        composition: toOptionalText(row.composition_en),
+        care: toOptionalText(row.care_en),
       },
     },
   };
@@ -192,14 +179,12 @@ export function getEmptyAdminProductInput(): AdminProductInput {
         description: '',
         composition: '',
         care: '',
-        delivery: '',
       },
       en: {
         name: '',
         description: '',
         composition: '',
         care: '',
-        delivery: '',
       },
     },
   };
@@ -215,7 +200,20 @@ export function mapProductToInput(product: AdminProductRecord): AdminProductInpu
     isNew: product.isNew,
     isActive: product.isActive,
     images: product.images,
-    translations: product.translations,
+    translations: {
+      ua: {
+        name: product.translations.ua.name,
+        description: product.translations.ua.description,
+        composition: product.translations.ua.composition ?? '',
+        care: product.translations.ua.care ?? '',
+      },
+      en: {
+        name: product.translations.en.name,
+        description: product.translations.en.description,
+        composition: product.translations.en.composition ?? '',
+        care: product.translations.en.care ?? '',
+      },
+    },
   };
 }
 
@@ -228,7 +226,7 @@ export async function listAdminProducts() {
 
   const { data, error } = await client
     .from('products')
-    .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,delivery_ua,delivery_en,product_images(url,position)')
+    .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,product_images(url,position)')
     .order('created_at', { ascending: false });
 
   if (error || !data) {
@@ -247,7 +245,7 @@ export async function getAdminProductById(id: string) {
 
   const { data, error } = await client
     .from('products')
-    .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,delivery_ua,delivery_en,product_images(url,position)')
+    .select('id,slug,category,price,sizes,colors,is_new,is_active,name_ua,name_en,description_ua,description_en,composition_ua,composition_en,care_ua,care_en,product_images(url,position)')
     .eq('id', id)
     .single();
 
@@ -276,12 +274,10 @@ export async function createAdminProduct(input: AdminProductInput) {
       name_en: input.translations.en.name,
       description_ua: input.translations.ua.description,
       description_en: input.translations.en.description,
-      composition_ua: input.translations.ua.composition,
-      composition_en: input.translations.en.composition,
-      care_ua: input.translations.ua.care,
-      care_en: input.translations.en.care,
-      delivery_ua: input.translations.ua.delivery,
-      delivery_en: input.translations.en.delivery,
+      composition_ua: input.translations.ua.composition || '',
+      composition_en: input.translations.en.composition || '',
+      care_ua: input.translations.ua.care || null,
+      care_en: input.translations.en.care || null,
     })
     .select('id')
     .single();
@@ -318,12 +314,10 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
       name_en: input.translations.en.name,
       description_ua: input.translations.ua.description,
       description_en: input.translations.en.description,
-      composition_ua: input.translations.ua.composition,
-      composition_en: input.translations.en.composition,
-      care_ua: input.translations.ua.care,
-      care_en: input.translations.en.care,
-      delivery_ua: input.translations.ua.delivery,
-      delivery_en: input.translations.en.delivery,
+      composition_ua: input.translations.ua.composition || '',
+      composition_en: input.translations.en.composition || '',
+      care_ua: input.translations.ua.care || null,
+      care_en: input.translations.en.care || null,
     })
     .eq('id', id);
 

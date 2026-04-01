@@ -13,12 +13,10 @@ create table if not exists public.products (
   name_en text not null,
   description_ua text not null,
   description_en text not null,
-  composition_ua text not null,
-  composition_en text not null,
+  composition_ua text,
+  composition_en text,
   care_ua text,
   care_en text,
-  delivery_ua text,
-  delivery_en text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -90,9 +88,7 @@ insert into public.products (
   composition_ua,
   composition_en,
   care_ua,
-  care_en,
-  delivery_ua,
-  delivery_en
+  care_en
 )
 values
   (
@@ -110,9 +106,7 @@ values
     'Трикотаж на основі бавовни з мʼякою щільною фактурою.',
     'Substantial cotton-based knit with a soft, smooth hand feel.',
     'Прати навиворіт при 30°C на делікатному режимі. Сушити природним способом, не пересушувати.',
-    'Wash inside out at 30°C on a delicate cycle. Air dry and avoid overdrying.',
-    'Після замовлення в Telegram ми підтверджуємо розмір і колір. Доставка по Україні Новою Поштою або Укрпоштою.',
-    'Once you order in Telegram, we confirm size and color. Delivery across Ukraine via Nova Poshta or Ukrposhta.'
+    'Wash inside out at 30°C on a delicate cycle. Air dry and avoid overdrying.'
   ),
   (
     'flow-zip-set',
@@ -129,9 +123,7 @@ values
     'Щільний бавовняний трикотаж із мʼякою внутрішньою поверхнею.',
     'Dense cotton knit with a soft inner surface.',
     'Прати при 30°C, застібнувши блискавку. Сушити горизонтально або на плічках, прасувати з вивороту.',
-    'Wash at 30°C with the zip closed. Dry flat or on a hanger and iron inside out.',
-    'Замовлення оформлюється через Telegram. Ми уточнюємо колір, розмір і спосіб доставки перед відправкою.',
-    'Orders are placed through Telegram. We confirm color, size, and delivery details before shipping.'
+    'Wash at 30°C with the zip closed. Dry flat or on a hanger and iron inside out.'
   ),
   (
     'ease-tee',
@@ -148,8 +140,6 @@ values
     'Мʼякий щільний трикотаж на основі бавовни.',
     'Soft, substantial cotton-based jersey.',
     'Прати при 30°C у делікатному режимі. Сушити природним способом, прасувати з вивороту.',
-    'Wash at 30°C on a delicate cycle. Air dry and iron inside out.',
-    'Після замовлення в Telegram ми підтверджуємо колір і розмір. Доставка по Україні Новою Поштою або Укрпоштою.',
-    'After ordering in Telegram, we confirm color and size. Delivery across Ukraine via Nova Poshta or Ukrposhta.'
+    'Wash at 30°C on a delicate cycle. Air dry and iron inside out.'
   )
 on conflict (slug) do nothing;
