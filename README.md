@@ -11,7 +11,7 @@ Current foundation:
 - Telegram deep-link ordering flow
 - Supabase-ready repository layer with fallback to local seed data
 - SQL schema for Supabase in `supabase/schema.sql`
-- Railway-ready `standalone` Next.js output
+- Railway-ready standard `next build` / `next start` deployment flow
 - GitHub Actions build workflow for deploy safety
 
 ## Run locally
@@ -56,8 +56,6 @@ Until real credentials are added, the storefront keeps working from local seed d
 
 ## GitHub and Railway deployment
 
-According to Railway's official Next.js guide, self-hosted deployment should use `output: "standalone"` and run the standalone server. This repository is already configured that way.
-
 Recommended flow:
 
 1. Create a GitHub repository and push this project.
@@ -83,12 +81,13 @@ Implemented:
 - product API routes
 - protected admin login shell
 - repository layer ready for Supabase reads
+- admin product create/edit foundation
+- admin image upload route for Supabase Storage
 - current product catalog with real photos
-- Railway-ready build and start flow
+- Railway-ready build and start flow using standard `next start`
 
 Still planned next:
 
-- real create/edit admin flows backed by Supabase
-- storage upload flow for product images
+- full live catalog switch from seed fallback to Supabase-backed data
 - Telegram bot webhook logic with Telegraf
 - final production deployment and domain setup
