@@ -46,14 +46,25 @@ export function parseTelegramOrderStartParam(value?: string | null): TelegramOrd
   const localeCandidate = parts[parts.length - 1];
   const locale = localeCandidate && isLocale(localeCandidate) ? localeCandidate : 'ua';
   const payloadParts = localeCandidate && isLocale(localeCandidate) ? parts.slice(0, -1) : parts;
-  const [slug, maybeSize, maybeColor] = payloadParts;
+  const [slug, ...optionParts] = payloadParts;
 
   if (!slug) {
     return null;
   }
 
-  const size = maybeSize && isAllowedSize(maybeSize) ? maybeSize : undefined;
-  const color = maybeColor && isAllowedColor(maybeColor) ? maybeColor : undefined;
+  let size: string | undefined;
+  let color: string | undefined;
+
+  for (const part of optionParts) {
+    if (!size && isAllowedSize(part)) {
+      size = part;
+      continue;
+    }
+
+    if (!color && isAllowedColor(part)) {
+      color = part;
+    }
+  }
 
   return { slug, size, color, locale };
 }
