@@ -29,11 +29,40 @@ create table if not exists public.product_images (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.telegram_order_sessions (
+  telegram_chat_id text primary key,
+  product_slug text not null references public.products(slug) on delete cascade,
+  size text,
+  color text,
+  locale text not null check (locale in ('ua', 'en')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.telegram_orders (
+  id uuid primary key default gen_random_uuid(),
+  telegram_chat_id text not null,
+  product_slug text not null,
+  product_name text not null,
+  size text,
+  color text,
+  locale text not null check (locale in ('ua', 'en')),
+  price integer not null check (price >= 0),
+  customer_name text not null,
+  phone text not null,
+  city text not null,
+  delivery_details text not null,
+  customer_message text not null,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists products_category_idx on public.products(category);
 create index if not exists products_is_active_idx on public.products(is_active);
 create index if not exists products_is_new_idx on public.products(is_new);
 create index if not exists product_images_product_id_idx on public.product_images(product_id);
 create unique index if not exists product_images_product_position_idx on public.product_images(product_id, position);
+create index if not exists telegram_orders_created_at_idx on public.telegram_orders(created_at desc);
+create index if not exists telegram_orders_chat_id_idx on public.telegram_orders(telegram_chat_id);
 
 create or replace function public.set_updated_at()
 returns trigger
@@ -51,8 +80,16 @@ before update on public.products
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists telegram_order_sessions_set_updated_at on public.telegram_order_sessions;
+create trigger telegram_order_sessions_set_updated_at
+before update on public.telegram_order_sessions
+for each row
+execute function public.set_updated_at();
+
 alter table public.products enable row level security;
 alter table public.product_images enable row level security;
+alter table public.telegram_order_sessions enable row level security;
+alter table public.telegram_orders enable row level security;
 
 drop policy if exists "Public can read active products" on public.products;
 create policy "Public can read active products"

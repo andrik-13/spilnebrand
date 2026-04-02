@@ -15,6 +15,14 @@ export interface TelegramOrderStartPayload {
   locale: Locale;
 }
 
+export interface TelegramCustomerDetails {
+  customerName: string;
+  phone: string;
+  city: string;
+  deliveryDetails: string;
+  customerMessage: string;
+}
+
 function isAllowedSize(value: string) {
   return (productSizeOptions as readonly string[]).includes(value);
 }
@@ -67,19 +75,6 @@ export function parseTelegramOrderStartParam(value?: string | null): TelegramOrd
   return { slug, size, color, locale };
 }
 
-export function buildTelegramOrderMessage(order: OrderDraft) {
-  const lines = [
-    "New order from SPIL'NE website",
-    `Product: ${order.product.name}`,
-    `Size: ${order.size || 'not selected'}`,
-    `Color: ${order.color || 'not selected'}`,
-    `Price: ${order.product.price} UAH`,
-    `Locale: ${order.locale}`,
-  ];
-
-  return lines.join('\n');
-}
-
 export function buildTelegramStartReply(order: OrderDraft) {
   if (order.locale === 'en') {
     return [
@@ -130,5 +125,121 @@ export function buildTelegramFallbackReply(locale: Locale) {
     '',
     'Надішли посилання на товар або напиши, яку річ, розмір і колір ти хочеш, і ми продовжимо замовлення тут.',
   ].join('\n');
+}
+
+function normalizeCustomerMessageParts(value: string) {
+  const directLines = value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^\d+[\).\-\s]*/, '').trim())
+    .map((line) => {
+      const colonIndex = line.indexOf(':');
+      if (colonIndex > 0 && colonIndex < 32) {
+        return line.slice(colonIndex + 1).trim();
+      }
+
+      return line;
+    })
+    .filter(Boolean);
+
+  if (directLines.length >= 4) {
+    return directLines;
+  }
+
+  return value
+    .split(/[;,]/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const colonIndex = part.indexOf(':');
+      if (colonIndex > 0 && colonIndex < 32) {
+        return part.slice(colonIndex + 1).trim();
+      }
+
+      return part;
+    })
+    .filter(Boolean);
+}
+
+export function parseTelegramCustomerDetails(value: string): TelegramCustomerDetails | null {
+  const parts = normalizeCustomerMessageParts(value);
+
+  if (parts.length < 4) {
+    return null;
+  }
+
+  const [customerName, phone, city, ...deliveryParts] = parts;
+  const deliveryDetails = deliveryParts.join(', ').trim();
+
+  if (!customerName || !phone || !city || !deliveryDetails) {
+    return null;
+  }
+
+  return {
+    customerName,
+    phone,
+    city,
+    deliveryDetails,
+    customerMessage: value.trim(),
+  };
+}
+
+export function buildTelegramDetailsPrompt(locale: Locale) {
+  if (locale === 'en') {
+    return [
+      'I need four details in one message:',
+      '1. Full name',
+      '2. Phone number',
+      '3. City',
+      '4. Delivery service and branch/post office',
+    ].join('\n');
+  }
+
+  return [
+    'Мені потрібні 4 пункти одним повідомленням:',
+    "1. Ім'я та прізвище",
+    '2. Номер телефону',
+    '3. Місто',
+    '4. Служба доставки та відділення/поштомат',
+  ].join('\n');
+}
+
+export function buildTelegramConfirmationReply(locale: Locale) {
+  if (locale === 'en') {
+    return [
+      "Thank you. We've saved your order request.",
+      '',
+      'We will review the details and confirm everything with you in Telegram shortly.',
+    ].join('\n');
+  }
+
+  return [
+    'Дякуємо. Ми зберегли твоє замовлення.',
+    '',
+    'Скоро переглянемо деталі та підтвердимо все в Telegram.',
+  ].join('\n');
+}
+
+export function buildTelegramAdminOrderMessage(order: OrderDraft, details: TelegramCustomerDetails) {
+  const lines = [
+    "New order from SPIL'NE website",
+    `Product: ${order.product.name}`,
+    `Slug: ${order.product.slug}`,
+    `Size: ${order.size || 'not selected'}`,
+    `Color: ${order.color || 'not selected'}`,
+    `Price: ${order.product.price} UAH`,
+    `Locale: ${order.locale}`,
+    '',
+    `Customer: ${details.customerName}`,
+    `Phone: ${details.phone}`,
+    `City: ${details.city}`,
+    `Delivery: ${details.deliveryDetails}`,
+    '',
+    'Customer message:',
+    details.customerMessage,
+  ];
+
+  return lines.join('\n');
 }
 

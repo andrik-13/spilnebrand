@@ -24,11 +24,15 @@ export function getTelegramWebhookSecret() {
   return process.env.TELEGRAM_WEBHOOK_SECRET || '';
 }
 
+export function getTelegramAdminChatId() {
+  return process.env.TELEGRAM_ADMIN_CHAT_ID || '';
+}
+
 export function hasTelegramBotToken() {
   return Boolean(getBotToken());
 }
 
-export async function sendTelegramMessage(chatId: number, text: string) {
+export async function sendTelegramMessage(chatId: number | string, text: string) {
   const token = getBotToken();
 
   if (!token) {
