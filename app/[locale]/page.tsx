@@ -10,9 +10,9 @@ import { getLocalizedProduct } from '@/lib/products';
 
 const lookbookImages = [
   '/brand/hanger-red.jpg',
-  '/catalog/tee/white-main.jpg',
-  '/catalog/trousers/black-editorial.jpg',
-  '/catalog/zip-set/beige-main.jpg',
+  '/catalog/tee/white-main.webp',
+  '/catalog/trousers/black-editorial.webp',
+  '/catalog/zip-set/beige-main.webp',
   '/brand/package.jpg',
 ];
 
@@ -31,7 +31,7 @@ export default async function HomePage({ params }: { params: { locale: string } 
     <div>
       <section className="relative min-h-[88vh] overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/catalog/zip-set/beige-main.jpg" alt="SPIL'NE hero" fill priority sizes="100vw" className="object-cover" />
+          <Image src="/catalog/zip-set/beige-main.webp" alt="SPIL'NE hero" fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,24,22,0.14),rgba(26,24,22,0.58))]" />
         </div>
 
@@ -67,7 +67,7 @@ export default async function HomePage({ params }: { params: { locale: string } 
       <section id="about" className="bg-surface px-5 py-20 md:px-[80px] md:py-[100px]">
         <div className="mx-auto grid max-w-[1280px] gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden">
-            <Image src="/catalog/tee/white-main.jpg" alt={copy.about} fill sizes="50vw" className="object-cover" />
+            <Image src="/catalog/tee/white-main.webp" alt={copy.about} fill sizes="50vw" className="object-cover" />
           </div>
           <div>
             <p className="mb-4 text-[13px] uppercase tracking-[2px] text-muted">{copy.aboutEyebrow}</p>

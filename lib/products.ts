@@ -39,7 +39,7 @@ export const products: Product[] = [
     sizes: ['S', 'M'],
     colors: ['black', 'beige'],
     isNew: true,
-    images: ['/catalog/trousers/black-editorial.jpg', '/catalog/trousers/beige-front.jpg', '/catalog/trousers/beige-detail.jpg', '/catalog/trousers/black-detail.jpg'],
+    images: ['/catalog/trousers/black-editorial.webp', '/catalog/trousers/beige-front.webp', '/catalog/trousers/beige-detail.webp', '/catalog/trousers/black-detail.webp'],
     translations: {
       ua: {
         name: 'Штани Drift',
@@ -63,7 +63,7 @@ export const products: Product[] = [
     sizes: ['S', 'M'],
     colors: ['beige', 'black', 'gray'],
     isNew: true,
-    images: ['/catalog/zip-set/beige-main.jpg', '/catalog/zip-set/black-main.jpg', '/catalog/zip-set/beige-back.jpg', '/catalog/zip-set/beige-lifestyle.jpg', '/catalog/zip-set/black-detail.jpg', '/catalog/zip-set/graphite-detail.jpg'],
+    images: ['/catalog/zip-set/beige-main.webp', '/catalog/zip-set/black-main.webp', '/catalog/zip-set/beige-back.webp', '/catalog/zip-set/beige-lifestyle.webp', '/catalog/zip-set/black-detail.webp', '/catalog/zip-set/graphite-detail.webp'],
     translations: {
       ua: {
         name: 'Костюм Flow Zip',
@@ -87,7 +87,7 @@ export const products: Product[] = [
     sizes: ['S', 'M'],
     colors: ['white', 'black'],
     isNew: true,
-    images: ['/catalog/tee/white-main.jpg', '/catalog/tee/black-main.jpg', '/catalog/tee/white-detail.jpg', '/catalog/tee/black-back.jpg'],
+    images: ['/catalog/tee/white-main.webp', '/catalog/tee/black-main.webp', '/catalog/tee/white-detail.webp', '/catalog/tee/black-back.webp'],
     translations: {
       ua: {
         name: 'Футболка Ease',
