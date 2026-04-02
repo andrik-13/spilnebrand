@@ -9,11 +9,11 @@ import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct } from '@/lib/products';
 
 const lookbookImages = [
-  '/brand/hanger-red.jpg',
+  '/brand/hanger-red.webp',
   '/catalog/tee/white-main.webp',
   '/catalog/trousers/black-editorial.webp',
   '/catalog/zip-set/beige-main.webp',
-  '/brand/package.jpg',
+  '/brand/package.webp',
 ];
 
 export const dynamic = 'force-dynamic';
