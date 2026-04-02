@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 import { categoryOrder, colorOptions, type Locale, locales, ui } from '@/lib/i18n';
 import type { AdminProductInput } from '@/lib/admin-products';
+import { productSizeOptions } from '@/lib/products';
 
 interface ProductFormProps {
   locale: Locale;
@@ -15,8 +16,6 @@ interface ProductFormProps {
   error?: string;
   success?: string;
 }
-
-const sizeOptions = ['S', 'M'] as const;
 
 export function ProductForm({
   locale,
@@ -130,7 +129,7 @@ export function ProductForm({
         <div>
           <span className="mb-2 block text-[13px] uppercase tracking-[2px] text-muted">Sizes</span>
           <div className="flex gap-4">
-            {sizeOptions.map((size) => (
+            {productSizeOptions.map((size) => (
               <label key={size} className="inline-flex items-center gap-2 text-sm text-primary">
                 <input type="checkbox" name="sizes" value={size} defaultChecked={product.sizes.includes(size)} />
                 <span>{size}</span>
@@ -278,3 +277,4 @@ export function ProductForm({
     </form>
   );
 }
+

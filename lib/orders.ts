@@ -1,5 +1,5 @@
 ﻿import { colorOptions, isLocale, type Locale } from './i18n';
-import type { LocalizedProduct } from './products';
+import { productSizeOptions, type LocalizedProduct } from './products';
 
 export interface OrderDraft {
   product: LocalizedProduct;
@@ -7,8 +7,6 @@ export interface OrderDraft {
   color?: string;
   locale: Locale;
 }
-
-const sizeOptions = ['S', 'M'] as const;
 
 export interface TelegramOrderStartPayload {
   slug: string;
@@ -18,7 +16,7 @@ export interface TelegramOrderStartPayload {
 }
 
 function isAllowedSize(value: string) {
-  return (sizeOptions as readonly string[]).includes(value);
+  return (productSizeOptions as readonly string[]).includes(value);
 }
 
 function isAllowedColor(value: string) {
@@ -133,3 +131,4 @@ export function buildTelegramFallbackReply(locale: Locale) {
     'Надішли посилання на товар або напиши, яку річ, розмір і колір ти хочеш, і ми продовжимо замовлення тут.',
   ].join('\n');
 }
+

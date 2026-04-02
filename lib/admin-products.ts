@@ -1,5 +1,5 @@
-import type { Category, ColorKey, Locale } from '@/lib/i18n';
-import { products, type Product } from '@/lib/products';
+﻿import type { Category, ColorKey, Locale } from '@/lib/i18n';
+import { productSizeOptions, products, type Product, type ProductSize } from '@/lib/products';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
 import { ADMIN_ERROR_CODES, createTaggedError } from '@/lib/admin-errors';
 
@@ -7,7 +7,7 @@ export interface AdminProductInput {
   slug: string;
   category: Category;
   price: number;
-  sizes: Array<'S' | 'M'>;
+  sizes: ProductSize[];
   colors: ColorKey[];
   isNew: boolean;
   isActive: boolean;
@@ -34,7 +34,7 @@ interface ProductRow {
   slug: string;
   category: Category;
   price: number;
-  sizes: Array<'S' | 'M'>;
+  sizes: ProductSize[];
   colors?: string[] | null;
   is_new: boolean;
   is_active?: boolean | null;
@@ -158,7 +158,7 @@ export function getEmptyAdminProductInput(): AdminProductInput {
     slug: '',
     category: 'tops',
     price: 0,
-    sizes: ['S', 'M'],
+    sizes: [...productSizeOptions],
     colors: ['black'],
     isNew: false,
     isActive: true,
@@ -317,3 +317,5 @@ export async function updateAdminProduct(id: string, input: AdminProductInput) {
 
   await syncProductImages(client, id, images);
 }
+
+

@@ -1,5 +1,5 @@
-import type { Category } from '@/lib/i18n';
-import { products, type Product } from '@/lib/products';
+﻿import type { Category } from '@/lib/i18n';
+import { products, type Product, type ProductSize } from '@/lib/products';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { unstable_noStore as noStore } from 'next/cache';
 import { cache } from 'react';
@@ -14,7 +14,7 @@ interface ProductRow {
   slug: string;
   category: Category;
   price: number;
-  sizes: Array<'S' | 'M'>;
+  sizes: ProductSize[];
   colors?: string[] | null;
   is_new: boolean;
   is_active?: boolean;
@@ -146,3 +146,4 @@ export async function getProductBySlug(slug: string) {
   noStore();
   return getProductBySlugCached(slug);
 }
+
