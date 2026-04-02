@@ -168,4 +168,5 @@ join (
     ('ease-tee', '/catalog/tee/black-back.webp', 3)
 ) as seed(slug, url, position)
   on seed.slug = products.slug
-on conflict (product_id, position) do nothing;
+on conflict (product_id, position) do update
+set url = excluded.url;
