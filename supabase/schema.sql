@@ -152,20 +152,21 @@ select
 from public.products
 join (
   values
-    ('drift-trousers', '/catalog/trousers/black-editorial.jpg', 0),
-    ('drift-trousers', '/catalog/trousers/beige-front.jpg', 1),
-    ('drift-trousers', '/catalog/trousers/beige-detail.jpg', 2),
-    ('drift-trousers', '/catalog/trousers/black-detail.jpg', 3),
-    ('flow-zip-set', '/catalog/zip-set/beige-main.jpg', 0),
-    ('flow-zip-set', '/catalog/zip-set/black-main.jpg', 1),
-    ('flow-zip-set', '/catalog/zip-set/beige-back.jpg', 2),
-    ('flow-zip-set', '/catalog/zip-set/beige-lifestyle.jpg', 3),
-    ('flow-zip-set', '/catalog/zip-set/black-detail.jpg', 4),
-    ('flow-zip-set', '/catalog/zip-set/graphite-detail.jpg', 5),
-    ('ease-tee', '/catalog/tee/white-main.jpg', 0),
-    ('ease-tee', '/catalog/tee/black-main.jpg', 1),
-    ('ease-tee', '/catalog/tee/white-detail.jpg', 2),
-    ('ease-tee', '/catalog/tee/black-back.jpg', 3)
+    ('drift-trousers', '/catalog/trousers/black-editorial.webp', 0),
+    ('drift-trousers', '/catalog/trousers/beige-front.webp', 1),
+    ('drift-trousers', '/catalog/trousers/beige-detail.webp', 2),
+    ('drift-trousers', '/catalog/trousers/black-detail.webp', 3),
+    ('flow-zip-set', '/catalog/zip-set/beige-main.webp', 0),
+    ('flow-zip-set', '/catalog/zip-set/black-main.webp', 1),
+    ('flow-zip-set', '/catalog/zip-set/beige-back.webp', 2),
+    ('flow-zip-set', '/catalog/zip-set/beige-lifestyle.webp', 3),
+    ('flow-zip-set', '/catalog/zip-set/black-detail.webp', 4),
+    ('flow-zip-set', '/catalog/zip-set/graphite-detail.webp', 5),
+    ('ease-tee', '/catalog/tee/white-main.webp', 0),
+    ('ease-tee', '/catalog/tee/black-main.webp', 1),
+    ('ease-tee', '/catalog/tee/white-detail.webp', 2),
+    ('ease-tee', '/catalog/tee/black-back.webp', 3)
 ) as seed(slug, url, position)
   on seed.slug = products.slug
-on conflict (product_id, position) do nothing;
+on conflict (product_id, position) do update
+set url = excluded.url;

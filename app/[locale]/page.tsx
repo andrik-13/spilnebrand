@@ -1,19 +1,19 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Button } from '@/components/ui/Button';
+import { StaticResponsiveImage } from '@/components/ui/StaticResponsiveImage';
 import { listProducts } from '@/lib/catalog-repository';
 import { getLocalizedPath, isLocale, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct } from '@/lib/products';
 
 const lookbookImages = [
-  '/brand/hanger-red.jpg',
-  '/catalog/tee/white-main.jpg',
-  '/catalog/trousers/black-editorial.jpg',
-  '/catalog/zip-set/beige-main.jpg',
-  '/brand/package.jpg',
+  '/brand/hanger-red.webp',
+  '/catalog/tee/white-main.webp',
+  '/catalog/trousers/black-editorial.webp',
+  '/catalog/zip-set/beige-main.webp',
+  '/brand/package.webp',
 ];
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +31,13 @@ export default async function HomePage({ params }: { params: { locale: string } 
     <div>
       <section className="relative min-h-[88vh] overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/catalog/zip-set/beige-main.jpg" alt="SPIL'NE hero" fill priority sizes="100vw" className="object-cover" />
+          <StaticResponsiveImage
+            src="/catalog/zip-set/beige-main.webp"
+            alt="SPIL'NE hero"
+            sizes="100vw"
+            priority
+            className="absolute inset-0 h-full w-full object-cover"
+          />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,24,22,0.14),rgba(26,24,22,0.58))]" />
         </div>
 
@@ -67,7 +73,12 @@ export default async function HomePage({ params }: { params: { locale: string } 
       <section id="about" className="bg-surface px-5 py-20 md:px-[80px] md:py-[100px]">
         <div className="mx-auto grid max-w-[1280px] gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden">
-            <Image src="/catalog/tee/white-main.jpg" alt={copy.about} fill sizes="50vw" className="object-cover" />
+            <StaticResponsiveImage
+              src="/catalog/tee/white-main.webp"
+              alt={copy.about}
+              sizes="50vw"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
           </div>
           <div>
             <p className="mb-4 text-[13px] uppercase tracking-[2px] text-muted">{copy.aboutEyebrow}</p>
@@ -89,7 +100,12 @@ export default async function HomePage({ params }: { params: { locale: string } 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-5">
             {lookbookImages.map((image) => (
               <div key={image} className="relative aspect-[4/5] overflow-hidden bg-surface md:aspect-[3/4]">
-                <Image src={image} alt={copy.galleryAlt} fill sizes="20vw" className="object-cover" />
+                <StaticResponsiveImage
+                  src={image}
+                  alt={copy.galleryAlt}
+                  sizes="20vw"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
               </div>
             ))}
           </div>

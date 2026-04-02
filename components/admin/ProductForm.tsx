@@ -221,7 +221,7 @@ export function ProductForm({
           onChange={(event) => setImages(event.target.value.split('\n'))}
           rows={6}
           className="w-full border border-accent bg-white px-4 py-3 font-mono text-sm outline-none"
-          placeholder="/catalog/tee/white-main.jpg"
+          placeholder="/catalog/tee/white-main.webp"
         />
         <span className="mt-2 block text-sm text-muted">One URL per line. You can also upload directly to Supabase Storage below.</span>
       </label>
