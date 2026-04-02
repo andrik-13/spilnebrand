@@ -2,16 +2,20 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProductForm } from '@/components/admin/ProductForm';
 import { getAdminProductById, mapProductToInput } from '@/lib/admin-products';
-import { type Locale } from '@/lib/i18n';
+import { isLocale, type Locale } from '@/lib/i18n';
 
 export default async function EditAdminProductPage({
   params,
   searchParams,
 }: {
-  params: { locale: Locale; id: string };
+  params: { locale: string; id: string };
   searchParams: { error?: string; saved?: string };
 }) {
-  const locale = params.locale;
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
+  const locale: Locale = params.locale;
   const product = await getAdminProductById(params.id);
 
   if (!product) {

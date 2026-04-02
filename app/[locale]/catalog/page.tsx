@@ -1,13 +1,18 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { listProducts } from '@/lib/catalog-repository';
-import { categoryOrder, getLocalizedPath, type Category, type Locale, ui } from '@/lib/i18n';
+import { categoryOrder, getLocalizedPath, isLocale, type Category, type Locale, ui } from '@/lib/i18n';
 import { getLocalizedProduct } from '@/lib/products';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CatalogPage({ params, searchParams }: { params: { locale: Locale }; searchParams: { category?: string } }) {
-  const locale = params.locale;
+export default async function CatalogPage({ params, searchParams }: { params: { locale: string }; searchParams: { category?: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
+  const locale: Locale = params.locale;
   const copy = ui[locale];
   const activeFilter = (searchParams.category as Category | 'all' | undefined) || 'all';
   const filters = [{ value: 'all', label: copy.allFilter }, ...categoryOrder.map((category) => ({ value: category, label: copy[category] }))];

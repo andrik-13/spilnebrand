@@ -23,8 +23,12 @@ export async function generateMetadata({ params }: { params: { locale: string; s
   };
 }
 
-export default async function ProductPage({ params }: { params: { locale: Locale; slug: string } }) {
-  const locale = params.locale;
+export default async function ProductPage({ params }: { params: { locale: string; slug: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
+  const locale: Locale = params.locale;
   const copy = ui[locale];
   const product = await getProductBySlug(params.slug);
 

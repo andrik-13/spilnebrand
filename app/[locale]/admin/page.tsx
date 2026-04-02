@@ -1,11 +1,16 @@
 import Link from 'next/link';
-import { getCurrencyLabel, type Locale, ui } from '@/lib/i18n';
+import { notFound } from 'next/navigation';
+import { getCurrencyLabel, isLocale, type Locale, ui } from '@/lib/i18n';
 import { ADMIN_ERROR_CODES, isTaggedError } from '@/lib/admin-errors';
 import { createSupabaseAdminClient } from '@/lib/supabase-server';
 import { listAdminProducts, type AdminProductRecord } from '@/lib/admin-products';
 
-export default async function AdminPage({ params }: { params: { locale: Locale } }) {
-  const locale = params.locale;
+export default async function AdminPage({ params }: { params: { locale: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
+  const locale: Locale = params.locale;
   const copy = ui[locale];
   const hasLiveDatabase = Boolean(createSupabaseAdminClient());
 
