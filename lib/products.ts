@@ -1,5 +1,8 @@
 ﻿import type { Category, ColorKey, Locale } from './i18n';
 
+export const productSizeOptions = ['S', 'M'] as const;
+export type ProductSize = (typeof productSizeOptions)[number];
+
 export interface ProductTranslation {
   name: string;
   description: string;
@@ -12,7 +15,7 @@ export interface Product {
   slug: string;
   category: Category;
   price: number;
-  sizes: Array<'S' | 'M'>;
+  sizes: ProductSize[];
   colors: ColorKey[];
   isNew: boolean;
   images: string[];
@@ -24,7 +27,7 @@ export interface LocalizedProduct extends ProductTranslation {
   slug: string;
   category: Category;
   price: number;
-  sizes: Array<'S' | 'M'>;
+  sizes: ProductSize[];
   colors: ColorKey[];
   isNew: boolean;
   images: string[];
@@ -122,3 +125,4 @@ export function getLocalizedProduct(product: Product, locale: Locale): Localized
 export function getProductBySlug(slug: string) {
   return products.find((product) => product.slug === slug) ?? null;
 }
+
