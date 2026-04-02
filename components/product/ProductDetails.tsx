@@ -57,7 +57,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
 
   const handleOrder = () => {
     window.open(
-      buildTelegramOrderLink(product.slug, selectedSize || undefined, selectedColor || undefined),
+      buildTelegramOrderLink(product.slug, selectedSize || undefined, selectedColor || undefined, locale),
       '_blank',
       'noopener,noreferrer'
     );
