@@ -34,15 +34,19 @@ function findColorImageIndex(images: string[], color: string) {
 export function ProductDetails({ locale, product }: ProductDetailsProps) {
   const copy = ui[locale];
   const hasImages = product.images.length > 0;
-  const [selectedImage, setSelectedImage] = useState(0);
+  const hasMultipleImages = product.images.length > 1;
+  const initialColor = product.colors[0] ?? null;
+  const initialImage = hasImages && initialColor ? findColorImageIndex(product.images, initialColor) : 0;
+  const [selectedImage, setSelectedImage] = useState(initialImage);
   const [selectedSize, setSelectedSize] = useState<string | null>(product.sizes[0] ?? null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(product.colors[0] ?? null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
 
   useEffect(() => {
-    setSelectedImage(0);
+    const nextColor = product.colors[0] ?? null;
+    setSelectedImage(hasImages && nextColor ? findColorImageIndex(product.images, nextColor) : 0);
     setSelectedSize(product.sizes[0] ?? null);
-    setSelectedColor(product.colors[0] ?? null);
-  }, [product]);
+    setSelectedColor(nextColor);
+  }, [hasImages, product]);
 
   const accordionItems = useMemo(() => {
     const compositionAndCare = [product.composition, product.care].filter(Boolean).join('\n\n');
@@ -89,14 +93,14 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
           <div>
             <div className="relative mb-3 aspect-[3/4] overflow-hidden bg-surface">
               {hasImages ? (
-                <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" />
+                <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" priority />
               ) : (
                 <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
                   {copy.imageComingSoon}
                 </div>
               )}
             </div>
-            {hasImages ? (
+            {hasMultipleImages ? (
               <div className="grid grid-cols-3 gap-3">
                 {product.images.map((image, index) => (
                   <button
@@ -150,7 +154,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
         <div className="md:hidden">
           <div className="relative mb-6 aspect-[3/4] overflow-hidden bg-surface">
             {hasImages ? (
-              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" />
+              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" priority />
             ) : (
               <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
                 {copy.imageComingSoon}
@@ -158,7 +162,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
             )}
           </div>
 
-          {hasImages ? (
+          {hasMultipleImages ? (
             <div className="mb-6 flex gap-2 overflow-x-auto scrollbar-hide">
               {product.images.map((image, index) => (
                 <button
