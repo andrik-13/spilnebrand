@@ -93,7 +93,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
           <div>
             <div className="relative mb-3 aspect-[3/4] overflow-hidden bg-surface">
               {hasImages ? (
-                <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" priority unoptimized />
+                <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" priority />
               ) : (
                 <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
                   {copy.imageComingSoon}
@@ -112,7 +112,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
                       selectedImage === index ? 'ring-2 ring-primary' : '',
                     ].join(' ')}
                   >
-                    <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="20vw" className="object-cover" unoptimized />
+                    <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="20vw" className="object-cover" />
                   </button>
                 ))}
               </div>
@@ -154,7 +154,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
         <div className="md:hidden">
           <div className="relative mb-6 aspect-[3/4] overflow-hidden bg-surface">
             {hasImages ? (
-              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" priority unoptimized />
+              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" priority />
             ) : (
               <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
                 {copy.imageComingSoon}
@@ -174,7 +174,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
                     selectedImage === index ? 'ring-2 ring-primary' : '',
                   ].join(' ')}
                 >
-                  <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="80px" className="object-cover" unoptimized />
+                  <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="80px" className="object-cover" />
                 </button>
               ))}
             </div>

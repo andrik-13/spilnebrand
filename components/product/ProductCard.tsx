@@ -21,7 +21,6 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             alt={product.name}
             fill
             sizes="(max-width: 768px) 50vw, 33vw"
-            unoptimized
             className="object-cover transition duration-300 group-hover:scale-[1.02] group-hover:brightness-95"
           />
         ) : (

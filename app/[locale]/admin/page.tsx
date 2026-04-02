@@ -74,7 +74,6 @@ export default async function AdminPage({ params }: { params: { locale: string }
                     alt={product.translations[locale].name}
                     fill
                     sizes="96px"
-                    unoptimized
                     className="object-cover"
                   />
                 ) : (
