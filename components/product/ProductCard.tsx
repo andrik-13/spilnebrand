@@ -1,7 +1,7 @@
 ﻿import Image from 'next/image';
 import Link from 'next/link';
 import type { LocalizedProduct } from '@/lib/products';
-import { getCurrencyLabel, type Locale } from '@/lib/i18n';
+import { getCurrencyLabel, type Locale, ui } from '@/lib/i18n';
 
 interface ProductCardProps {
   product: LocalizedProduct;
@@ -9,16 +9,25 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, locale }: ProductCardProps) {
+  const primaryImage = product.images[0];
+  const copy = ui[locale];
+
   return (
     <Link href={`/${locale}/catalog/${product.slug}`} className="group block">
       <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-surface">
-        <Image
-          src={product.images[0]}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 50vw, 33vw"
-          className="object-cover transition duration-300 group-hover:scale-[1.02] group-hover:brightness-95"
-        />
+        {primaryImage ? (
+          <Image
+            src={primaryImage}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            className="object-cover transition duration-300 group-hover:scale-[1.02] group-hover:brightness-95"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center px-6 text-center text-[13px] uppercase tracking-[2px] text-muted">
+            {copy.imageComingSoon}
+          </div>
+        )}
       </div>
 
       <h3 className="mb-2">{product.name}</h3>
