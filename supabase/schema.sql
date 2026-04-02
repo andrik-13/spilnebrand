@@ -143,3 +143,29 @@ values
     'Wash at 30°C on a delicate cycle. Air dry and iron inside out.'
   )
 on conflict (slug) do nothing;
+
+insert into public.product_images (product_id, url, position)
+select
+  products.id,
+  seed.url,
+  seed.position
+from public.products
+join (
+  values
+    ('drift-trousers', '/catalog/trousers/black-editorial.jpg', 0),
+    ('drift-trousers', '/catalog/trousers/beige-front.jpg', 1),
+    ('drift-trousers', '/catalog/trousers/beige-detail.jpg', 2),
+    ('drift-trousers', '/catalog/trousers/black-detail.jpg', 3),
+    ('flow-zip-set', '/catalog/zip-set/beige-main.jpg', 0),
+    ('flow-zip-set', '/catalog/zip-set/black-main.jpg', 1),
+    ('flow-zip-set', '/catalog/zip-set/beige-back.jpg', 2),
+    ('flow-zip-set', '/catalog/zip-set/beige-lifestyle.jpg', 3),
+    ('flow-zip-set', '/catalog/zip-set/black-detail.jpg', 4),
+    ('flow-zip-set', '/catalog/zip-set/graphite-detail.jpg', 5),
+    ('ease-tee', '/catalog/tee/white-main.jpg', 0),
+    ('ease-tee', '/catalog/tee/black-main.jpg', 1),
+    ('ease-tee', '/catalog/tee/white-detail.jpg', 2),
+    ('ease-tee', '/catalog/tee/black-back.jpg', 3)
+) as seed(slug, url, position)
+  on seed.slug = products.slug
+on conflict (product_id, position) do nothing;

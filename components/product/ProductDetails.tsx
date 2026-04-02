@@ -33,6 +33,7 @@ function findColorImageIndex(images: string[], color: string) {
 
 export function ProductDetails({ locale, product }: ProductDetailsProps) {
   const copy = ui[locale];
+  const hasImages = product.images.length > 0;
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(product.sizes[0] ?? null);
   const [selectedColor, setSelectedColor] = useState<string | null>(product.colors[0] ?? null);
@@ -66,7 +67,7 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
           type="button"
           onClick={() => {
             setSelectedColor(color);
-            setSelectedImage(findColorImageIndex(product.images, color));
+            setSelectedImage(hasImages ? findColorImageIndex(product.images, color) : 0);
           }}
           className={[
             'cursor-pointer border px-3 py-2 text-[13px] uppercase tracking-[2px] transition-colors',
@@ -87,23 +88,31 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
         <div className="hidden gap-12 md:grid md:grid-cols-[60%_40%]">
           <div>
             <div className="relative mb-3 aspect-[3/4] overflow-hidden bg-surface">
-              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" />
+              {hasImages ? (
+                <Image src={product.images[selectedImage]} alt={product.name} fill sizes="60vw" className="object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
+                  {copy.imageComingSoon}
+                </div>
+              )}
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {product.images.map((image, index) => (
-                <button
-                  key={image}
-                  type="button"
-                  onClick={() => setSelectedImage(index)}
-                  className={[
-                    'relative aspect-[3/4] cursor-pointer overflow-hidden bg-surface',
-                    selectedImage === index ? 'ring-2 ring-primary' : '',
-                  ].join(' ')}
-                >
-                  <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="20vw" className="object-cover" />
-                </button>
-              ))}
-            </div>
+            {hasImages ? (
+              <div className="grid grid-cols-3 gap-3">
+                {product.images.map((image, index) => (
+                  <button
+                    key={image}
+                    type="button"
+                    onClick={() => setSelectedImage(index)}
+                    className={[
+                      'relative aspect-[3/4] cursor-pointer overflow-hidden bg-surface',
+                      selectedImage === index ? 'ring-2 ring-primary' : '',
+                    ].join(' ')}
+                  >
+                    <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="20vw" className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="self-start md:sticky md:top-24">
@@ -140,24 +149,32 @@ export function ProductDetails({ locale, product }: ProductDetailsProps) {
 
         <div className="md:hidden">
           <div className="relative mb-6 aspect-[3/4] overflow-hidden bg-surface">
-            <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" />
+            {hasImages ? (
+              <Image src={product.images[selectedImage]} alt={product.name} fill sizes="100vw" className="object-cover" />
+            ) : (
+              <div className="flex h-full items-center justify-center px-8 text-center text-[13px] uppercase tracking-[2px] text-muted">
+                {copy.imageComingSoon}
+              </div>
+            )}
           </div>
 
-          <div className="mb-6 flex gap-2 overflow-x-auto scrollbar-hide">
-            {product.images.map((image, index) => (
-              <button
-                key={image}
-                type="button"
-                onClick={() => setSelectedImage(index)}
-                className={[
-                  'relative h-24 w-20 cursor-pointer flex-shrink-0 overflow-hidden bg-surface',
-                  selectedImage === index ? 'ring-2 ring-primary' : '',
-                ].join(' ')}
-              >
-                <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="80px" className="object-cover" />
-              </button>
-            ))}
-          </div>
+          {hasImages ? (
+            <div className="mb-6 flex gap-2 overflow-x-auto scrollbar-hide">
+              {product.images.map((image, index) => (
+                <button
+                  key={image}
+                  type="button"
+                  onClick={() => setSelectedImage(index)}
+                  className={[
+                    'relative h-24 w-20 cursor-pointer flex-shrink-0 overflow-hidden bg-surface',
+                    selectedImage === index ? 'ring-2 ring-primary' : '',
+                  ].join(' ')}
+                >
+                  <Image src={image} alt={`${product.name} ${index + 1}`} fill sizes="80px" className="object-cover" />
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           <div className="pb-28">
             <p className="mb-2 text-[13px] uppercase tracking-[2px] text-muted">{getCategoryLabel(locale, product.category)}</p>

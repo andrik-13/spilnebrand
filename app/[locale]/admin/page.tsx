@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCurrencyLabel, isLocale, type Locale, ui } from '@/lib/i18n';
@@ -65,12 +66,30 @@ export default async function AdminPage({ params }: { params: { locale: string }
       <div className="space-y-4">
         {items.map((product) => (
           <div key={product.id} className="flex flex-col gap-4 border border-accent bg-white/40 p-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
-              <div className="mt-2 text-xl font-sans">{product.translations[locale].name}</div>
-              <div className="mt-1 text-muted">{product.slug}</div>
-              <div className="mt-1 text-sm text-muted">
-                {getCurrencyLabel(product.price, locale)} / {product.isActive ? copy.productVisible : copy.productHidden}
+            <div className="flex gap-4 md:items-center">
+              <div className="relative h-28 w-24 flex-shrink-0 overflow-hidden bg-surface">
+                {product.images[0] ? (
+                  <Image
+                    src={product.images[0]}
+                    alt={product.translations[locale].name}
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center px-3 text-center text-[11px] uppercase tracking-[2px] text-muted">
+                    {copy.imageComingSoon}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div className="text-[13px] uppercase tracking-[2px] text-muted">{product.category}</div>
+                <div className="mt-2 text-xl font-sans">{product.translations[locale].name}</div>
+                <div className="mt-1 text-muted">{product.slug}</div>
+                <div className="mt-1 text-sm text-muted">
+                  {getCurrencyLabel(product.price, locale)} / {product.isActive ? copy.productVisible : copy.productHidden}
+                </div>
               </div>
             </div>
 
