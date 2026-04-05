@@ -132,7 +132,7 @@ function normalizeCustomerMessageParts(value: string) {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => line.replace(/^\d+[\).\-\s]*/, '').trim())
+    .map((line) => line.replace(/^\d{1,2}[\).\-\s]+/, '').trim())
     .map((line) => {
       const colonIndex = line.indexOf(':');
       if (colonIndex > 0 && colonIndex < 32) {

@@ -43,6 +43,11 @@ export async function POST(request: Request) {
       );
     }
 
+    const adminChatId = getTelegramAdminChatId();
+    if (!adminChatId) {
+      return NextResponse.json({ ok: false, error: 'Missing TELEGRAM_ADMIN_CHAT_ID.' }, { status: 503 });
+    }
+
     const update = (await request.json().catch(() => null)) as TelegramUpdate | null;
     if (!update) {
       return NextResponse.json({ ok: false, error: 'Invalid Telegram payload.' }, { status: 400 });
@@ -95,26 +100,21 @@ export async function POST(request: Request) {
         customerMessage: details.customerMessage,
       });
 
-      const adminChatId = getTelegramAdminChatId();
-      if (adminChatId) {
-        try {
-          await sendTelegramMessage(
-            adminChatId,
-            buildTelegramAdminOrderMessage(
-              {
-                product: localizedProduct,
-                size: session.size,
-                color: session.color,
-                locale: session.locale,
-              },
-              details
-            )
-          );
-        } catch (error) {
-          console.error('Telegram admin notification failed', error);
-        }
-      } else {
-        console.error('Missing TELEGRAM_ADMIN_CHAT_ID for Telegram order notifications');
+      try {
+        await sendTelegramMessage(
+          adminChatId,
+          buildTelegramAdminOrderMessage(
+            {
+              product: localizedProduct,
+              size: session.size,
+              color: session.color,
+              locale: session.locale,
+            },
+            details
+          )
+        );
+      } catch (error) {
+        console.error('Telegram admin notification failed', error);
       }
 
       await clearTelegramOrderSession(chatId);
